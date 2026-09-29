@@ -25,7 +25,7 @@
                             200: '#99f6e4',
                             300: '#5eead4',
                             400: '#2dd4bf',
-                            500: '#0d9488', // Emerald-Teal Primary
+                            500: '#0d9488',
                             600: '#0f766e',
                             700: '#115e59',
                             800: '#134e4a',
@@ -77,13 +77,48 @@
         }
     </script>
 
+    <!-- Theme & Language Pre-render Setup (Default strictly Light Mode) -->
+    <script>
+        if (localStorage.theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            if (!('theme' in localStorage)) {
+                localStorage.theme = 'light';
+            }
+        }
+        if (localStorage.lang === 'en') {
+            document.documentElement.setAttribute('lang', 'en');
+            document.documentElement.setAttribute('dir', 'ltr');
+        } else {
+            document.documentElement.setAttribute('lang', 'ar');
+            document.documentElement.setAttribute('dir', 'rtl');
+        }
+    </script>
+
+    <!-- External Blog Translations Module -->
+    <script src="js/blog-translations.js"></script>
+
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         body {
             font-family: 'IBM Plex Sans Arabic', sans-serif;
-            letter-spacing: -0.012em;
+            letter-spacing: -0.01em;
+            line-height: 1.6;
+        }
+
+        html[lang="en"] body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.01em;
+            line-height: 1.55;
+        }
+
+        html[lang="en"] h1, 
+        html[lang="en"] h2, 
+        html[lang="en"] h3 {
+            letter-spacing: -0.025em;
         }
         
         .font-en {
@@ -102,7 +137,7 @@
             transition: width 0.1s ease-out;
         }
 
-        /* VIBRANT BRAND GEOMETRIC GRID BACKGROUND */
+        /* Geometric Background */
         .crosshair-grid {
             background-image: 
                 radial-gradient(circle, rgba(13, 148, 136, 0.45) 1.5px, transparent 1.5px),
@@ -163,6 +198,11 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #0d9488;
         }
+
+        /* Direction-aware icon flipping */
+        html[dir="ltr"] .dir-flip {
+            transform: scaleX(-1);
+        }
     </style>
 </head>
 
@@ -171,9 +211,7 @@
     <!-- Top Reading Progress Indicator -->
     <div id="progress-bar"></div>
 
-    <!-- ========================================================================= -->
-    <!-- GEOMETRIC GRID & AMBIENT GLOWS -->
-    <!-- ========================================================================= -->
+    <!-- Geometric Grid & Ambient Glows -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div class="absolute inset-0 crosshair-grid opacity-90 dark:opacity-75"></div>
         <div class="absolute -top-10 right-1/4 w-[34rem] h-[34rem] bg-gradient-to-br from-brand-400/20 via-teal-400/15 to-emerald-400/15 dark:from-brand-500/20 dark:via-teal-600/20 dark:to-emerald-600/15 rounded-full blur-[100px] animate-pulse-glow"></div>
@@ -196,40 +234,50 @@
                         </div>
                         <div class="flex flex-col">
                             <div class="flex items-center gap-2">
-                                <span class="font-bold text-2xl tracking-tight text-gray-900 dark:text-white">رَقِيم</span>
+                                <span class="font-bold text-2xl tracking-tight text-gray-900 dark:text-white" data-i18n="brand_name">رَقِيم</span>
                                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/80 font-en">Journal</span>
                             </div>
-                            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">أوراق معرفية وأدلة في هندسة التعلّم</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium" data-i18n="blog_brand_subtitle">أوراق معرفية وأدلة في هندسة التعلّم</span>
                         </div>
                     </a>
                 </div>
 
                 <!-- Desktop Navigation Links -->
-                <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-gray-600 dark:text-gray-300">
-                    <a href="index.html" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1 flex items-center gap-1.5">
-                        <i data-lucide="arrow-right" class="w-4 h-4 text-brand-500"></i>
-                        <span>الرئيسية (حلول رَقِيم)</span>
+                <nav class="hidden lg:flex items-center gap-3.5 xl:gap-6 text-sm font-medium text-gray-600 dark:text-gray-300">
+                    <a href="index.html" class="whitespace-nowrap hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1 flex items-center gap-1.5 font-bold text-brand-600 dark:text-brand-400 flex-shrink-0">
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-brand-500 dir-flip flex-shrink-0"></i>
+                        <span data-i18n="nav_home">الرئيسية</span>
                     </a>
-                    <a href="#featured" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1">المقال البارز</a>
-                    <a href="#articles" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1">كافة المقالات</a>
-                    <a href="#toolkits" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1">الأدلة والقوالب</a>
-                    <a href="#newsletter" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1">النشرة البريدية</a>
+                    <a href="#featured" class="whitespace-nowrap hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1 flex-shrink-0" data-i18n="nav_featured">المقال البارز</a>
+                    <a href="#articles" class="whitespace-nowrap hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1 flex-shrink-0" data-i18n="nav_articles">المقالات</a>
+                    <a href="lab.html" class="whitespace-nowrap px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800/80 hover:bg-emerald-100 transition-all flex items-center gap-1.5 hover:scale-105 transform duration-150 flex-shrink-0">
+                        <i data-lucide="cpu" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i>
+                        <span>مختبر التحليلات</span>
+                    </a>
                 </nav>
 
-                <!-- Actions: Theme Toggle & Back to Solutions CTA -->
-                <div class="flex items-center gap-3">
-                    <button id="theme-toggle" class="p-2.5 rounded-xl bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-dark-card border border-gray-200 dark:border-dark-border transition-colors text-gray-600 dark:text-gray-300" aria-label="تبديل المظهر">
+                <!-- Actions: Language Switcher, Theme Toggle & CTA -->
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    
+                    <!-- Language Toggle Button -->
+                    <button id="lang-toggle" onclick="toggleLanguage()" class="whitespace-nowrap flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-100 dark:bg-dark-surface text-gray-700 dark:text-gray-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-gray-200/70 dark:hover:bg-dark-card transition-all border border-gray-200/80 dark:border-dark-border text-xs font-bold shadow-sm flex-shrink-0" aria-label="Toggle Language">
+                        <i data-lucide="globe" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                        <span id="lang-label">English</span>
+                    </button>
+
+                    <!-- Theme Toggle (Default Light Mode) -->
+                    <button id="theme-toggle" class="p-2.5 rounded-xl bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-dark-card border border-gray-200 dark:border-dark-border transition-colors text-gray-600 dark:text-gray-300 shadow-sm flex-shrink-0" aria-label="تبديل المظهر">
                         <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-amber-400"></i>
                         <i data-lucide="moon" class="w-5 h-5 block dark:hidden text-gray-600"></i>
                     </button>
 
-                    <a href="index.html#contact" class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm shadow-md shadow-brand-600/20 hover:shadow-lg hover:shadow-brand-600/30 transition-all duration-200 hover:-translate-y-0.5">
-                        <i data-lucide="sparkles" class="w-4 h-4"></i>
-                        <span>طلب استشارة تعليمية</span>
+                    <a href="index.html#contact" class="whitespace-nowrap hidden sm:inline-flex items-center gap-2 px-4 xl:px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm shadow-md shadow-brand-600/20 hover:shadow-lg hover:shadow-brand-600/30 transition-all duration-200 hover:-translate-y-0.5 flex-shrink-0">
+                        <i data-lucide="sparkles" class="w-4 h-4 flex-shrink-0"></i>
+                        <span data-i18n="btn_req_consult">طلب استشارة</span>
                     </a>
 
                     <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-btn" class="md:hidden p-2.5 rounded-xl bg-gray-100 dark:bg-dark-surface text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-dark-border">
+                    <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-xl bg-gray-100 dark:bg-dark-surface text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-dark-border flex-shrink-0">
                         <i data-lucide="menu" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -237,12 +285,12 @@
         </div>
 
         <!-- Mobile Navigation Menu -->
-        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface px-4 pt-3 pb-6 space-y-2">
-            <a href="index.html" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-600 transition-colors">← العودة للرئيسية</a>
-            <a href="#featured" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-600 transition-colors">المقال البارز</a>
-            <a href="#articles" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-600 transition-colors">كافة المقالات والأوراق</a>
-            <a href="#toolkits" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-600 transition-colors">الأدلة والقوالب للتحميل</a>
-            <a href="index.html#contact" class="block px-3 py-2.5 text-center rounded-lg bg-brand-600 text-white font-medium">طلب استشارة</a>
+        <div id="mobile-menu" class="hidden lg:hidden border-t border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface px-4 pt-3 pb-6 space-y-2">
+            <a href="lab.html" class="block px-3 py-2.5 rounded-lg text-base font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60">🧪 مختبر علم بيانات التعليم (Lab)</a>
+            <a href="index.html" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-600 transition-colors">الرئيسية (حلول رَقِيم)</a>
+            <a href="#featured" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-600 transition-colors" data-i18n="nav_featured">المقال البارز</a>
+            <a href="#articles" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-600 transition-colors" data-i18n="nav_articles">كافة المقالات</a>
+            <a href="index.html#contact" class="block px-3 py-2.5 text-center rounded-lg bg-brand-600 text-white font-medium" data-i18n="btn_req_consult">طلب استشارة</a>
         </div>
     </header>
 
@@ -258,44 +306,44 @@
                 <!-- Topic Pill -->
                 <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white dark:bg-dark-surface text-brand-700 dark:text-brand-300 text-xs font-bold border border-brand-200/80 dark:border-brand-800/60 shadow-sm">
                     <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
-                    <span>مجلة رَقِيم المعرفية</span>
+                    <span data-i18n="blog_hero_pill_1">مجلة رَقِيم المعرفية</span>
                     <span class="text-gray-300 dark:text-gray-600">•</span>
-                    <span class="font-en text-[11px] text-gray-500 dark:text-gray-400 font-semibold">Evidence & Learning Insights</span>
+                    <span class="font-en text-[11px] text-gray-500 dark:text-gray-400 font-semibold" data-i18n="blog_hero_pill_2">Evidence & Learning Insights</span>
                 </div>
 
                 <!-- Headline -->
-                <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-gray-950 dark:text-white leading-[1.25]">
-                    أفكار وأدوات عملية لهندسة <span class="text-transparent bg-clip-text bg-gradient-to-l from-brand-600 via-teal-600 to-emerald-500 dark:from-brand-300 dark:via-teal-300 dark:to-emerald-300">التعلّم والقياس</span>
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-gray-950 dark:text-white leading-[1.25]" data-i18n-html="blog_hero_title">
+                    أفكار وأدوات عملية لهندسة <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-teal-600 to-emerald-500 dark:from-brand-300 dark:via-teal-300 dark:to-emerald-300">التعلّم والقياس</span>
                 </h1>
 
                 <!-- Subtitle -->
-                <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto font-normal">
+                <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto font-normal" data-i18n="blog_hero_desc">
                     أوراق تحليلية، أطر عمل، وقوالب قابلة للتطبيق مباشرة في تخطيط البرامج التدريبية، وبناء التقييمات، وتحليل بيانات المتعلمين، وسد فجوات المهارات.
                 </p>
 
-                <!-- Search & Instant Filter Bar -->
+                <!-- Search & Filter Bar -->
                 <div class="pt-4 max-w-2xl mx-auto">
                     <div class="relative">
-                        <input type="text" id="blog-search-input" onkeyup="filterArticles()" placeholder="ابحث في المقالات، المواضيع، أو المصطلحات (مثال: Rubrics, Alignment Matrix)..." class="w-full pl-4 pr-12 py-3.5 rounded-2xl bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm transition-all">
-                        <i data-lucide="search" class="w-5 h-5 text-gray-400 absolute right-4 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="blog-search-input" onkeyup="filterArticles()" data-i18n-placeholder="search_placeholder" placeholder="ابحث في المقالات، المواضيع، أو المصطلحات (مثال: Rubrics, Alignment Matrix)..." class="w-full px-4 pe-12 py-3.5 rounded-2xl bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm transition-all text-start">
+                        <i data-lucide="search" class="w-5 h-5 text-gray-400 absolute end-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                     </div>
                 </div>
 
                 <!-- Category Filter Pills -->
                 <div class="flex flex-wrap items-center justify-center gap-2 pt-2" id="category-filters">
-                    <button onclick="setCategoryFilter('all')" class="cat-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-brand-600 text-white shadow-sm" data-cat="all">
+                    <button onclick="setCategoryFilter('all')" class="cat-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-brand-600 text-white shadow-sm" data-cat="all" data-i18n="cat_all">
                         الكل (6 مقالات)
                     </button>
-                    <button onclick="setCategoryFilter('learning-design')" class="cat-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-white dark:bg-dark-surface text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-dark-border hover:border-brand-400" data-cat="learning-design">
+                    <button onclick="setCategoryFilter('learning-design')" class="cat-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-white dark:bg-dark-surface text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-dark-border hover:border-brand-400" data-cat="learning-design" data-i18n="cat_ld">
                         تصميم التعليم (Learning Design)
                     </button>
-                    <button onclick="setCategoryFilter('assessment')" class="cat-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-white dark:bg-dark-surface text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-dark-border hover:border-brand-400" data-cat="assessment">
+                    <button onclick="setCategoryFilter('assessment')" class="cat-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-white dark:bg-dark-surface text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-dark-border hover:border-brand-400" data-cat="assessment" data-i18n="cat_assess">
                         التقييم والشواهد (Assessment)
                     </button>
-                    <button onclick="setCategoryFilter('analytics')" class="cat-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-white dark:bg-dark-surface text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-dark-border hover:border-brand-400" data-cat="analytics">
+                    <button onclick="setCategoryFilter('analytics')" class="cat-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-white dark:bg-dark-surface text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-dark-border hover:border-brand-400" data-cat="analytics" data-i18n="cat_analytics">
                         تحليلات التعلّم (Analytics)
                     </button>
-                    <button onclick="setCategoryFilter('skills')" class="cat-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-white dark:bg-dark-surface text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-dark-border hover:border-brand-400" data-cat="skills">
+                    <button onclick="setCategoryFilter('skills')" class="cat-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-white dark:bg-dark-surface text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-dark-border hover:border-brand-400" data-cat="skills" data-i18n="cat_skills">
                         فجوات المهارات (Skills Gap)
                     </button>
                 </div>
@@ -315,9 +363,9 @@
             <div class="mb-6 flex items-center justify-between">
                 <span class="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest flex items-center gap-2">
                     <span class="w-6 h-[2px] bg-brand-500"></span>
-                    المقال الرئيسي المميز
+                    <span data-i18n="featured_badge">المقال الرئيسي المميز</span>
                 </span>
-                <span class="text-xs text-gray-400 font-medium">مختار هذا الأسبوع</span>
+                <span class="text-xs text-gray-400 font-medium" data-i18n="featured_weekly">مختار هذا الأسبوع</span>
             </div>
 
             <!-- Featured Card Container -->
@@ -325,7 +373,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                     
                     <!-- Left: Graphic / Framework Visual -->
-                    <div class="lg:col-span-5 rounded-2xl bg-gradient-to-br from-brand-900 via-teal-950 to-slate-950 p-6 text-white relative overflow-hidden flex flex-col justify-between min-h-[260px] border border-brand-700/30">
+                    <div class="lg:col-span-5 rounded-2xl bg-gradient-to-br from-brand-900 via-teal-950 to-slate-950 p-6 text-white relative overflow-hidden flex flex-col justify-between min-h-[260px] border border-brand-700/30 text-start">
                         <div class="absolute -top-12 -right-12 w-44 h-44 bg-brand-500/20 rounded-full blur-2xl pointer-events-none"></div>
                         
                         <div class="flex items-center justify-between relative z-10">
@@ -334,13 +382,13 @@
                             </span>
                             <span class="text-xs font-en text-gray-300 flex items-center gap-1">
                                 <i data-lucide="clock" class="w-3.5 h-3.5 text-brand-400"></i>
-                                8 دقائق قراءة
+                                <span data-i18n="feat_read_time">8 دقائق قراءة</span>
                             </span>
                         </div>
 
                         <!-- Illustrated Pipeline Micro-Diagram -->
                         <div class="my-6 p-4 rounded-xl bg-black/40 border border-white/10 backdrop-blur-md space-y-2 relative z-10">
-                            <span class="text-[10px] text-gray-400 font-en uppercase tracking-wider block">Methodology Flow</span>
+                            <span class="text-[10px] text-gray-400 font-en uppercase tracking-wider block" data-i18n="diag_title">Methodology Flow</span>
                             <div class="flex items-center justify-between text-xs font-bold font-en text-brand-200">
                                 <span>Goal</span> → <span>Matrix</span> → <span>Evidence</span> → <span>Outcome</span>
                             </div>
@@ -350,48 +398,48 @@
                             <div class="w-7 h-7 rounded-full bg-brand-500/30 border border-brand-400/40 flex items-center justify-center font-bold text-white text-[11px]">
                                 ر
                             </div>
-                            <span>فريق أبحاث وتطوير رَقِيم</span>
+                            <span data-i18n="author_raqeem">فريق أبحاث وتطوير رَقِيم</span>
                             <span class="text-gray-500">•</span>
                             <span class="text-gray-400 font-en text-[11px]">September 2026</span>
                         </div>
                     </div>
 
                     <!-- Right: Content & Summary -->
-                    <div class="lg:col-span-7 space-y-4">
+                    <div class="lg:col-span-7 space-y-4 text-start">
                         <div class="flex items-center gap-2.5">
-                            <span class="px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 text-xs font-bold border border-brand-200 dark:border-brand-800">
+                            <span class="px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 text-xs font-bold border border-brand-200 dark:border-brand-800" data-i18n="feat_cat">
                                 تصميم التعليم & المواءمة
                             </span>
                             <span class="text-xs text-gray-400 font-en">Alignment Matrix</span>
                         </div>
 
-                        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-950 dark:text-white leading-snug group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-950 dark:text-white leading-snug group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" data-i18n="feat_title">
                             كيف تبني مصفوفة مواءمة الأهداف (Alignment Matrix) لضمان تحقيق الأثر التدريبي؟
                         </h2>
 
-                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed font-normal">
+                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed font-normal" data-i18n="feat_excerpt">
                             أكبر سبب لضعف نتائج الدورات التدريبية هو وجود فجوة بين ما يُقال في المحتوى وما يُطلب في التقييم. نستعرض في هذا الدليل المنهجية التطبيقية لمواءمة كل هدف تدريبي بنشاط تفاعلي وشاهد تقييم قابل للقياس المباشر.
                         </p>
 
-                        <!-- Key Highlights bullets -->
+                        <!-- Highlights -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs text-gray-600 dark:text-gray-400 font-medium">
                             <div class="flex items-center gap-1.5">
-                                <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-500"></i>
-                                <span>قالب مصفوفة المواءمة بصيغة جاهزة</span>
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                                <span data-i18n="feat_bullet1">قالب مصفوفة المواءمة بصيغة جاهزة</span>
                             </div>
                             <div class="flex items-center gap-1.5">
-                                <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-500"></i>
-                                <span>تطبيق عملي على تصنيف بلوم المعدل</span>
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                                <span data-i18n="feat_bullet2">تطبيق عملي على تصنيف بلوم المعدل</span>
                             </div>
                         </div>
 
                         <div class="pt-4 flex items-center justify-between border-t border-gray-100 dark:border-dark-border">
                             <button onclick="openArticleModal(1)" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md shadow-brand-600/20 hover:shadow-lg transition-all hover:scale-105">
-                                <span>قراءة المقال والدليل كاملاً</span>
-                                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                                <span data-i18n="btn_read_full">قراءة المقال والدليل كاملاً</span>
+                                <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i>
                             </button>
                             
-                            <span class="text-xs text-gray-400 font-en hidden sm:inline">8 min read • Free Framework</span>
+                            <span class="text-xs text-gray-400 font-en hidden sm:inline" data-i18n="feat_footer_note">8 min read • Free Framework</span>
                         </div>
                     </div>
 
@@ -410,13 +458,13 @@
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 
-                <!-- Left Column: Articles Grid (8 cols) -->
+                <!-- Left Column: Articles Grid -->
                 <div class="lg:col-span-8 space-y-8">
                     
                     <div class="flex items-center justify-between">
                         <h2 class="text-2xl font-bold text-gray-950 dark:text-white flex items-center gap-2.5">
                             <i data-lucide="book-open" class="w-6 h-6 text-brand-500"></i>
-                            <span>أحدث الأوراق المعرفية والمقالات</span>
+                            <span data-i18n="feed_title">أحدث الأوراق المعرفية والمقالات</span>
                         </h2>
                         <span class="text-xs text-gray-500 dark:text-gray-400" id="article-count-label">عرض 6 مقالات</span>
                     </div>
@@ -425,7 +473,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="articles-container">
                         
                         <!-- Article 1: Learning Design -->
-                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group" data-category="learning-design">
+                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group text-start" data-category="learning-design">
                             <div class="space-y-3.5">
                                 <div class="flex items-center justify-between">
                                     <span class="px-2.5 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300 text-[11px] font-bold border border-brand-200 dark:border-brand-800">
@@ -433,24 +481,24 @@
                                     </span>
                                     <span class="text-[11px] text-gray-400 font-en">6 min read</span>
                                 </div>
-                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors leading-snug">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors leading-snug" data-i18n="art2_title">
                                     النموذج الرباعي لهندسة تجربة التعلّم: من الهدف السلوكي إلى النشاط التفاعلي
                                 </h3>
-                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
+                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3" data-i18n="art2_excerpt">
                                     دليل خطوة بخطوة للمدربين ومصممي التعليم لكيفية تحويل المفاهيم النظرية الجافة إلى أنشطة تطبيقية تضمن تفاعل المتعلم واستيعابه العميق.
                                 </p>
                             </div>
                             <div class="pt-4 mt-4 border-t border-gray-100 dark:border-dark-border flex items-center justify-between">
-                                <span class="text-[11px] text-gray-400">18 سبتمبر 2026</span>
+                                <span class="text-[11px] text-gray-400" data-i18n="art2_date">18 سبتمبر 2026</span>
                                 <button onclick="openArticleModal(2)" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
-                                    <span>قراءة المقال</span>
-                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                                    <span data-i18n="btn_read">قراءة المقال</span>
+                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5 dir-flip"></i>
                                 </button>
                             </div>
                         </article>
 
                         <!-- Article 2: Assessment -->
-                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group" data-category="assessment">
+                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group text-start" data-category="assessment">
                             <div class="space-y-3.5">
                                 <div class="flex items-center justify-between">
                                     <span class="px-2.5 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/70 text-teal-700 dark:text-teal-300 text-[11px] font-bold border border-teal-200 dark:border-teal-800">
@@ -458,24 +506,24 @@
                                     </span>
                                     <span class="text-[11px] text-gray-400 font-en">7 min read</span>
                                 </div>
-                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors leading-snug">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors leading-snug" data-i18n="art3_title">
                                     لماذا تفشل التقييمات التقليدية؟ الدليل العملي لبناء روبرك قياس الأداء (Rubrics)
                                 </h3>
-                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
+                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3" data-i18n="art3_excerpt">
                                     التقييم ليس لإعطاء الدرجات بل لتوجيه التعلّم؛ كيف تصمم معايير أداء واضحة وعادلة تقيس الإتقان الفعلي وتوفر شواهد موثوقة.
                                 </p>
                             </div>
                             <div class="pt-4 mt-4 border-t border-gray-100 dark:border-dark-border flex items-center justify-between">
-                                <span class="text-[11px] text-gray-400">12 سبتمبر 2026</span>
+                                <span class="text-[11px] text-gray-400" data-i18n="art3_date">12 سبتمبر 2026</span>
                                 <button onclick="openArticleModal(3)" class="text-xs font-bold text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1">
-                                    <span>قراءة المقال</span>
-                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                                    <span data-i18n="btn_read">قراءة المقال</span>
+                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5 dir-flip"></i>
                                 </button>
                             </div>
                         </article>
 
                         <!-- Article 3: Learning Analytics -->
-                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group" data-category="analytics">
+                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group text-start" data-category="analytics">
                             <div class="space-y-3.5">
                                 <div class="flex items-center justify-between">
                                     <span class="px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-[11px] font-bold border border-blue-200 dark:border-blue-800">
@@ -483,24 +531,24 @@
                                     </span>
                                     <span class="text-[11px] text-gray-400 font-en">5 min read</span>
                                 </div>
-                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug" data-i18n="art4_title">
                                     تحويل مؤشرات LMS إلى قرارات تدريبية: 5 مقاييس حاسمة لفرق التعلّم والتطوير
                                 </h3>
-                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
+                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3" data-i18n="art4_excerpt">
                                     كيف تقرأ معدلات الإكمال والاستبقاء وتحلل نقاط التعثر المبكرة للمتعلمين دون الغرق في أكوام من البيانات غير المفيدة.
                                 </p>
                             </div>
                             <div class="pt-4 mt-4 border-t border-gray-100 dark:border-dark-border flex items-center justify-between">
-                                <span class="text-[11px] text-gray-400">05 سبتمبر 2026</span>
+                                <span class="text-[11px] text-gray-400" data-i18n="art4_date">05 سبتمبر 2026</span>
                                 <button onclick="openArticleModal(4)" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
-                                    <span>قراءة المقال</span>
-                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                                    <span data-i18n="btn_read">قراءة المقال</span>
+                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5 dir-flip"></i>
                                 </button>
                             </div>
                         </article>
 
                         <!-- Article 4: Skills Gap Analysis -->
-                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group" data-category="skills">
+                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group text-start" data-category="skills">
                             <div class="space-y-3.5">
                                 <div class="flex items-center justify-between">
                                     <span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 text-[11px] font-bold border border-indigo-200 dark:border-indigo-800">
@@ -508,24 +556,24 @@
                                     </span>
                                     <span class="text-[11px] text-gray-400 font-en">9 min read</span>
                                 </div>
-                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug" data-i18n="art5_title">
                                     من رصد الفجوة إلى مسار التعلّم: كيف تصمم مسارًا مخصصًا (Learning Path)؟
                                 </h3>
-                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
+                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3" data-i18n="art5_excerpt">
                                     منهجية تحويل نتائج تقييم الكفاءات الوظيفية إلى وحدات تدريبية متدرجة تعالج الفجوة المهارية بأقل وقت وأعلى عائد.
                                 </p>
                             </div>
                             <div class="pt-4 mt-4 border-t border-gray-100 dark:border-dark-border flex items-center justify-between">
-                                <span class="text-[11px] text-gray-400">28 أغسطس 2026</span>
+                                <span class="text-[11px] text-gray-400" data-i18n="art5_date">28 أغسطس 2026</span>
                                 <button onclick="openArticleModal(5)" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
-                                    <span>قراءة المقال</span>
-                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                                    <span data-i18n="btn_read">قراءة المقال</span>
+                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5 dir-flip"></i>
                                 </button>
                             </div>
                         </article>
 
                         <!-- Article 5: Case Study -->
-                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group" data-category="learning-design">
+                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group text-start" data-category="learning-design">
                             <div class="space-y-3.5">
                                 <div class="flex items-center justify-between">
                                     <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-200 dark:border-emerald-800">
@@ -533,24 +581,24 @@
                                     </span>
                                     <span class="text-[11px] text-gray-400 font-en">10 min read</span>
                                 </div>
-                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug" data-i18n="art6_title">
                                     دراسة حالة: كيف رفعنا معدل إكمال برنامج تدريبي بنسبة 42% عبر إعادة تصميم الأنشطة؟
                                 </h3>
-                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
+                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3" data-i18n="art6_excerpt">
                                     تحليل تفصيلي لمشروع حقيقي قمنا فيه بتشخيص تسرب المتعلمين، وإعادة صياغة الأنشطة وتقسيم الوحدات لرفع المشاركة والأثر.
                                 </p>
                             </div>
                             <div class="pt-4 mt-4 border-t border-gray-100 dark:border-dark-border flex items-center justify-between">
-                                <span class="text-[11px] text-gray-400">19 أغسطس 2026</span>
+                                <span class="text-[11px] text-gray-400" data-i18n="art6_date">19 أغسطس 2026</span>
                                 <button onclick="openArticleModal(6)" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
-                                    <span>قراءة المقال</span>
-                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                                    <span data-i18n="btn_read">قراءة المقال</span>
+                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5 dir-flip"></i>
                                 </button>
                             </div>
                         </article>
 
                         <!-- Article 6: Practical Checklist -->
-                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group" data-category="assessment">
+                        <article class="blog-card bg-white dark:bg-dark-card rounded-2xl border border-gray-200/90 dark:border-dark-border p-6 shadow-sm flex flex-col justify-between group text-start" data-category="assessment">
                             <div class="space-y-3.5">
                                 <div class="flex items-center justify-between">
                                     <span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-200 dark:border-amber-800">
@@ -558,18 +606,18 @@
                                     </span>
                                     <span class="text-[11px] text-gray-400 font-en">4 min read</span>
                                 </div>
-                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors leading-snug">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors leading-snug" data-i18n="art7_title">
                                     قائمة التحقق الذهبية (Quality Checklist) لاعتماد الحقائب التدريبية قبل الإطلاق
                                 </h3>
-                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
+                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3" data-i18n="art7_excerpt">
                                     12 معيارًا أساسيًا يجب التأكد منها في أهداف الدورة، المحتوى، والأنشطة لضمان خروج الحقيبة بأعلى معايير الجودة التدريبية.
                                 </p>
                             </div>
                             <div class="pt-4 mt-4 border-t border-gray-100 dark:border-dark-border flex items-center justify-between">
-                                <span class="text-[11px] text-gray-400">10 أغسطس 2026</span>
+                                <span class="text-[11px] text-gray-400" data-i18n="art7_date">10 أغسطس 2026</span>
                                 <button onclick="openArticleModal(7)" class="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1">
-                                    <span>قراءة المقال</span>
-                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                                    <span data-i18n="btn_read">قراءة المقال</span>
+                                    <i data-lucide="arrow-left" class="w-3.5 h-3.5 dir-flip"></i>
                                 </button>
                             </div>
                         </article>
@@ -578,56 +626,56 @@
 
                 </div>
 
-                <!-- Right Column: Sidebar (4 cols) -->
+                <!-- Right Column: Sidebar -->
                 <aside class="lg:col-span-4 space-y-8">
                     
                     <!-- 1. Free Downloadable Toolkits Box -->
-                    <div id="toolkits" class="p-6 rounded-3xl bg-gradient-to-br from-brand-900 via-teal-950 to-slate-950 text-white border border-brand-700/40 shadow-xl relative overflow-hidden">
+                    <div id="toolkits" class="p-6 rounded-3xl bg-gradient-to-br from-brand-900 via-teal-950 to-slate-950 text-white border border-brand-700/40 shadow-xl relative overflow-hidden text-start">
                         <div class="absolute -bottom-10 -left-10 w-36 h-36 bg-brand-500/20 rounded-full blur-2xl pointer-events-none"></div>
                         <div class="space-y-4 relative z-10">
                             <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-brand-300 text-xs font-bold border border-white/10">
                                 <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                                <span>قوالب مجانية للتحميل</span>
+                                <span data-i18n="sb_kit_badge">قوالب مجانية للتحميل</span>
                             </div>
-                            <h3 class="text-xl font-bold leading-snug">
+                            <h3 class="text-xl font-bold leading-snug" data-i18n="sb_kit_title">
                                 حزمة أدوات تخطيط وتقييم التدريب 2026
                             </h3>
-                            <p class="text-xs text-gray-300 leading-relaxed">
+                            <p class="text-xs text-gray-300 leading-relaxed" data-i18n="sb_kit_desc">
                                 تشمل نماذج مصفوفة المواءمة (Excel)، قوالب روبرك التقييم، ودليل صياغة أهداف التعلّم القابلة للقياس.
                             </p>
                             <button onclick="downloadToolkitModal()" class="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-2 hover:scale-105">
                                 <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-                                <span>تحميل الحزمة المجانية (Instant Download)</span>
+                                <span data-i18n="sb_kit_btn">تحميل الحزمة المجانية (Instant Download)</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- 2. Most Read Articles (Trending) -->
-                    <div class="p-6 rounded-3xl bg-white dark:bg-dark-card border border-gray-200/90 dark:border-dark-border shadow-sm space-y-4">
+                    <!-- 2. Most Read Articles -->
+                    <div class="p-6 rounded-3xl bg-white dark:bg-dark-card border border-gray-200/90 dark:border-dark-border shadow-sm space-y-4 text-start">
                         <h3 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             <i data-lucide="trending-up" class="w-4 h-4 text-brand-500"></i>
-                            <span>الأكثر قراءة ومشاركة</span>
+                            <span data-i18n="sb_trending_title">الأكثر قراءة ومشاركة</span>
                         </h3>
 
                         <div class="space-y-4 divide-y divide-gray-100 dark:divide-dark-border">
                             
                             <div class="pt-3 first:pt-0 cursor-pointer group" onclick="openArticleModal(1)">
                                 <span class="text-xs font-en font-bold text-brand-600 dark:text-brand-400 block mb-1">01 • Framework</span>
-                                <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                                <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" data-i18n="sb_t1">
                                     كيف تبني مصفوفة مواءمة الأهداف (Alignment Matrix)؟
                                 </h4>
                             </div>
 
                             <div class="pt-3 cursor-pointer group" onclick="openArticleModal(3)">
                                 <span class="text-xs font-en font-bold text-teal-600 dark:text-teal-400 block mb-1">02 • Assessment</span>
-                                <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                                <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors" data-i18n="sb_t2">
                                     الدليل العملي لبناء روبرك قياس الأداء القائم على الشواهد
                                 </h4>
                             </div>
 
                             <div class="pt-3 cursor-pointer group" onclick="openArticleModal(4)">
                                 <span class="text-xs font-en font-bold text-blue-600 dark:text-blue-400 block mb-1">03 • Analytics</span>
-                                <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" data-i18n="sb_t3">
                                     تحويل مؤشرات LMS إلى قرارات تدريبية حاسمة
                                 </h4>
                             </div>
@@ -636,31 +684,31 @@
                     </div>
 
                     <!-- 3. Newsletter Subscription Box -->
-                    <div id="newsletter" class="p-6 rounded-3xl bg-white dark:bg-dark-card border border-brand-200 dark:border-brand-900/60 shadow-sm space-y-4">
+                    <div id="newsletter" class="p-6 rounded-3xl bg-white dark:bg-dark-card border border-brand-200 dark:border-brand-900/60 shadow-sm space-y-4 text-start">
                         <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-dark-surface text-brand-600 dark:text-brand-400 flex items-center justify-center">
                             <i data-lucide="mail-check" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <h3 class="text-base font-bold text-gray-900 dark:text-white">نشرة رَقِيم البريدية (Weekly Dispatch)</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white" data-i18n="nl_title">نشرة رَقِيم البريدية (Weekly Dispatch)</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed" data-i18n="nl_desc">
                                 نرسل كل أسبوع فكرة واحدة عميقة، أداة عملية، ودراسة حالة في تصميم وقياس التعلّم.
                             </p>
                         </div>
                         <form onsubmit="handleNewsletterSubmit(event)" class="space-y-2">
-                            <input type="email" required placeholder="أدخل بريدك الإلكتروني..." class="w-full px-3.5 py-2.5 rounded-xl bg-gray-50 dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 font-en">
+                            <input type="email" required data-i18n-placeholder="nl_placeholder" placeholder="أدخل بريدك الإلكتروني..." class="w-full px-3.5 py-2.5 rounded-xl bg-gray-50 dark:bg-dark-surface border border-gray-200 dark:border-dark-border text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 font-en">
                             <button type="submit" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm">
-                                <span>اشترك مجانًا</span>
-                                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                                <span data-i18n="nl_btn">اشترك مجانًا</span>
+                                <i data-lucide="send" class="w-3.5 h-3.5 dir-flip"></i>
                             </button>
-                            <p id="nl-success-msg" class="hidden text-[11px] text-emerald-600 font-semibold text-center pt-1">
+                            <p id="nl-success-msg" class="hidden text-[11px] text-emerald-600 font-semibold text-center pt-1" data-i18n="nl_success">
                                 تم اشتراكك بنجاح في نشرة رَقِيم!
                             </p>
                         </form>
                     </div>
 
                     <!-- 4. Tags Cloud -->
-                    <div class="p-6 rounded-3xl bg-white dark:bg-dark-card border border-gray-200/90 dark:border-dark-border shadow-sm space-y-3">
-                        <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <div class="p-6 rounded-3xl bg-white dark:bg-dark-card border border-gray-200/90 dark:border-dark-border shadow-sm space-y-3 text-start">
+                        <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="sb_tags_title">
                             سحابة المفاهيم والمصطلحات
                         </h3>
                         <div class="flex flex-wrap gap-1.5 font-en text-[11px] font-bold">
@@ -686,14 +734,14 @@
     <!-- ARTICLE READER MODAL -->
     <!-- ========================================================================= -->
     <div id="article-reader-modal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 transition-all">
-        <div class="bg-white dark:bg-dark-card max-w-3xl w-full rounded-3xl p-6 sm:p-10 border border-gray-200 dark:border-dark-border shadow-2xl relative max-h-[90vh] overflow-y-auto space-y-6">
+        <div class="bg-white dark:bg-dark-card max-w-3xl w-full rounded-3xl p-6 sm:p-10 border border-gray-200 dark:border-dark-border shadow-2xl relative max-h-[90vh] overflow-y-auto space-y-6 text-start">
             
-            <button onclick="closeArticleModal()" class="absolute top-6 left-6 p-2 rounded-xl bg-gray-100 dark:bg-dark-surface text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <button onclick="closeArticleModal()" class="absolute top-6 end-6 p-2 rounded-xl bg-gray-100 dark:bg-dark-surface text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
             <!-- Modal Meta Header -->
-            <div class="space-y-3 pr-2">
+            <div class="space-y-3 pe-8">
                 <div class="flex items-center gap-2">
                     <span class="px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300 text-xs font-bold font-en" id="modal-tag">
                         Learning Design
@@ -706,7 +754,7 @@
                 </h2>
 
                 <div class="flex items-center gap-3 text-xs text-gray-500 border-b border-gray-100 dark:border-dark-border pb-4">
-                    <span>بقلم: فريق أبحاث رَقِيم</span>
+                    <span id="modal-author" data-i18n="author_raqeem">بقلم: فريق أبحاث رَقِيم</span>
                     <span>•</span>
                     <span id="modal-date">سبتمبر 2026</span>
                 </div>
@@ -719,10 +767,10 @@
 
             <!-- Footer Action CTA inside Modal -->
             <div class="pt-6 border-t border-gray-100 dark:border-dark-border flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="text-xs text-gray-500">
+                <div class="text-xs text-gray-500" data-i18n="modal_reader_prompt">
                     هل ترغب في تطبيق هذه المنهجية داخل برامجك التدريبية؟
                 </div>
-                <a href="index.html#contact" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all shadow-md">
+                <a href="index.html#contact" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all shadow-md" data-i18n="btn_req_consult">
                     طلب استشارة من رَقِيم
                 </a>
             </div>
@@ -736,50 +784,50 @@
     <!-- ========================================================================= -->
     <footer class="bg-gray-950 text-gray-300 pt-16 pb-12 border-t border-gray-800 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-gray-800">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-gray-800 text-start">
                 
                 <div class="md:col-span-6 space-y-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center font-bold text-xl shadow-lg">
                             ر
                         </div>
-                        <span class="font-bold text-2xl text-white tracking-tight">رَقِيم</span>
+                        <span class="font-bold text-2xl text-white tracking-tight" data-i18n="brand_name">رَقِيم</span>
                     </div>
-                    <p class="text-gray-400 text-sm leading-relaxed max-w-md">
+                    <p class="text-gray-400 text-sm leading-relaxed max-w-md" data-i18n="footer_blog_desc">
                         منصة وحلول للتعلّم والتطوير المبني على البيانات — نربط بين التخطيط والتقييم وتحليلات الأداء وسد فجوات المهارات لمساعدة المدربين والمؤسسات على بناء برامج قابلة للقياس.
                     </p>
                 </div>
 
                 <div class="md:col-span-3 space-y-3">
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">روابط سريعة</span>
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block" data-i18n="footer_quick_links">روابط سريعة</span>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="index.html" class="hover:text-brand-400 transition-colors">الصفحة الرئيسية للمنظومة</a></li>
-                        <li><a href="index.html#solutions" class="hover:text-brand-400 transition-colors">حلول وأدوات رَقِيم الأربعة</a></li>
-                        <li><a href="index.html#needs-assessment" class="hover:text-brand-400 transition-colors">محدد الاحتياج التدريبي</a></li>
-                        <li><a href="index.html#contact" class="hover:text-brand-400 transition-colors">طلب استشارة وتعاون</a></li>
+                        <li><a href="index.html" class="hover:text-brand-400 transition-colors" data-i18n="nav_home">الصفحة الرئيسية للمنظومة</a></li>
+                        <li><a href="index.html#solutions" class="hover:text-brand-400 transition-colors" data-i18n="nav_solutions">حلول وأدوات رَقِيم الأربعة</a></li>
+                        <li><a href="index.html#needs-assessment" class="hover:text-brand-400 transition-colors" data-i18n="nav_needs">محدد الاحتياج التدريبي</a></li>
+                        <li><a href="index.html#contact" class="hover:text-brand-400 transition-colors" data-i18n="nav_cta">طلب استشارة وتعاون</a></li>
                     </ul>
                 </div>
 
                 <div class="md:col-span-3 space-y-3">
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">الأقسام المعرفية</span>
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block" data-i18n="footer_sections">الأقسام المعرفية</span>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#category-filters" onclick="setCategoryFilter('learning-design')" class="hover:text-brand-400 transition-colors">تصميم وتخطيط المناهج</a></li>
-                        <li><a href="#category-filters" onclick="setCategoryFilter('assessment')" class="hover:text-brand-400 transition-colors">التقييم وبناء الشواهد والروبرك</a></li>
-                        <li><a href="#category-filters" onclick="setCategoryFilter('analytics')" class="hover:text-brand-400 transition-colors">تحليلات بيانات التعلّم</a></li>
-                        <li><a href="#category-filters" onclick="setCategoryFilter('skills')" class="hover:text-brand-400 transition-colors">تحليل فجوات المهارات</a></li>
+                        <li><a href="#category-filters" onclick="setCategoryFilter('learning-design')" class="hover:text-brand-400 transition-colors" data-i18n="cat_ld">تصميم وتخطيط المناهج</a></li>
+                        <li><a href="#category-filters" onclick="setCategoryFilter('assessment')" class="hover:text-brand-400 transition-colors" data-i18n="cat_assess">التقييم وبناء الشواهد والروبرك</a></li>
+                        <li><a href="#category-filters" onclick="setCategoryFilter('analytics')" class="hover:text-brand-400 transition-colors" data-i18n="cat_analytics">تحليلات بيانات التعلّم</a></li>
+                        <li><a href="#category-filters" onclick="setCategoryFilter('skills')" class="hover:text-brand-400 transition-colors" data-i18n="cat_skills">تحليل فجوات المهارات</a></li>
                     </ul>
                 </div>
 
             </div>
 
             <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
-                <p>© 2026 رَقِيم — جميع الحقوق محفوظة | مقالات وأدوات هندسة التعلّم</p>
+                <p data-i18n="footer_rights_blog">© 2026 رَقِيم — جميع الحقوق محفوظة | مقالات وأدوات هندسة التعلّم</p>
                 <div class="flex items-center gap-4">
-                    <a href="index.html" class="hover:text-gray-300">الرئيسية</a>
+                    <a href="index.html" class="hover:text-gray-300" data-i18n="footer_nav_home">الرئيسية</a>
                     <span>•</span>
-                    <a href="blog.html" class="hover:text-gray-300">المدونة</a>
+                    <a href="blog.html" class="hover:text-gray-300" data-i18n="footer_nav_blog">المدونة</a>
                     <span>•</span>
-                    <a href="index.html#contact" class="hover:text-gray-300">تواصل معنا</a>
+                    <a href="index.html#contact" class="hover:text-gray-300" data-i18n="footer_nav_contact">تواصل معنا</a>
                 </div>
             </div>
         </div>
@@ -790,9 +838,6 @@
     <!-- INTERACTIVE JAVASCRIPT LOGIC -->
     <!-- ========================================================================= -->
     <script>
-        // Initialize Lucide Icons
-        lucide.createIcons();
-
         // Reading Progress Bar
         window.addEventListener('scroll', () => {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
@@ -801,160 +846,32 @@
             document.getElementById("progress-bar").style.width = scrolled + "%";
         });
 
-        // Theme Toggle (Dark / Light)
+        // Theme Toggle (Default Light Mode)
         const themeToggle = document.getElementById('theme-toggle');
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
+        
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            lucide.createIcons();
         }
 
         themeToggle.addEventListener('click', () => {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.theme = 'light';
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.theme = 'dark';
-            }
+            const isDark = !document.documentElement.classList.contains('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            applyTheme(isDark);
         });
 
         // Mobile Menu Toggle
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Articles Knowledge Database
-        const articlesDB = {
-            1: {
-                tag: "تصميم التعليم • Alignment Matrix",
-                readTime: "8 min read",
-                date: "24 سبتمبر 2026",
-                title: "كيف تبني مصفوفة مواءمة الأهداف (Alignment Matrix) لضمان تحقيق الأثر التدريبي؟",
-                content: `
-                    <p class="text-base font-semibold text-brand-600 dark:text-brand-400">
-                        مصفوفة المواءمة هي العمود الفقري لأي برنامج تدريبي ناجح؛ فبدونها يتحول التدريب إلى مجرد إلقاء معلومات دون أثر قابل للقياس.
-                    </p>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-6 mb-3">1. ما هي مصفوفة المواءمة (Alignment Matrix)؟</h3>
-                    <p>
-                        هي جدول تخطيطي يربط كل هدف تدريبي (Objective) بنشاط تعلّم تفاعلي (Activity) وبطريقة تقييم محددة (Assessment). إذا كان هناك هدف لا يقابله نشاط أو تقييم، أو كان هناك محتوى لا يخدم أي هدف، فإن البرنامج التدريبي يعاني من "انعدام المواءمة".
-                    </p>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-6 mb-3">2. خطوات بناء المصفوفة:</h3>
-                    <ul class="list-disc list-inside space-y-2">
-                        <li><strong>تحديد الأهداف السلوكية:</strong> باستخدام أفعال قابلة للقياس طبقًا لمستويات بلوم (تطبيق، تحليل، تقييم).</li>
-                        <li><strong>تحديد الشاهد التقييمي:</strong> ما الدليل العملي الذي يثبت أن المتعلم أتقن الهدف؟ (مثل: كتابة كود، حل مسألة، دراسة حالة).</li>
-                        <li><strong>هندسة النشاط التفاعلي:</strong> تصميم التمرين الذي يمارس فيه المتعلم المهارة قبل أن يُقيّم عليها.</li>
-                    </ul>
-                    <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-surface border border-gray-200 dark:border-dark-border my-4">
-                        <strong class="text-gray-900 dark:text-white block mb-1">قاعدة رَقِيم الذهبية:</strong>
-                        «لا تضع سؤالاً في التقييم لم يمارس المتعلم تطبيقه في نشاط، ولا تشرح محتوى لا يخدم هدفًا مصاغًا في المصفوفة.»
-                    </div>
-                `
-            },
-            2: {
-                tag: "Learning Design",
-                readTime: "6 min read",
-                date: "18 سبتمبر 2026",
-                title: "النموذج الرباعي لهندسة تجربة التعلّم: من الهدف السلوكي إلى النشاط التفاعلي",
-                content: `
-                    <p>
-                        يقوم نموذج رَقِيم الرباعي (Objective → Content → Activity → Assessment) على فكرة التدرج البيداغوجي المنطقي الذي ينقل المتعلم من متلقٍ سلبي إلى ممارس نشط.
-                    </p>
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mt-4 mb-2">ركائز النموذج:</h3>
-                    <p>
-                        1. <strong>الهدف:</strong> صياغة النتيجة المتوقعة بلغة سلوكية واضحة.<br>
-                        2. <strong>المحتوى:</strong> تقديم المعرفة الأساسية فقط دون حشو زائد (Micro-learning chunks).<br>
-                        3. <strong>النشاط:</strong> إشراك المتعلم في مهمة فردية أو تفاعلية لتطبيق ما تعلمه.<br>
-                        4. <strong>التقييم:</strong> جمع التغذية الراجعة والشواهد لقياس مدى تحقق الهدف.
-                    </p>
-                `
-            },
-            3: {
-                tag: "Assessment & Rubrics",
-                readTime: "7 min read",
-                date: "12 سبتمبر 2026",
-                title: "لماذا تفشل التقييمات التقليدية؟ الدليل العملي لبناء روبرك قياس الأداء (Rubrics)",
-                content: `
-                    <p>
-                        الامتحانات التقليدية ذات الاختيار من متعدد تقيس التذكر والحفظ فقط، بينما تتطلب بيئات العمل مهارات معقدة كحل المشكلات والتفكير النقدي.
-                    </p>
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mt-4 mb-2">كيف تصمم روبرك شواهد حقيقي؟</h3>
-                    <p>
-                        الروبرك هو مصفوفة تتضمن: معايير الأداء (Criteria)، ومستويات الإتقان (مبتدئ، متمكن، متقدم)، ووصفًا دقيقًا لكل مستوى. هذا يمنح المتعلم معيارًا عادلاً وشفافًا للتطوير الذاتي.
-                    </p>
-                `
-            },
-            4: {
-                tag: "Learning Analytics",
-                readTime: "5 min read",
-                date: "05 سبتمبر 2026",
-                title: "تحويل مؤشرات LMS إلى قرارات تدريبية: 5 مقاييس حاسمة لفرق التعلّم والتطوير",
-                content: `
-                    <p>
-                        لا تكفي معرفة عدد من سجلوا في الدورة؛ الأهم هو معرفة أين يتعثر المتعلمون ولماذا.
-                    </p>
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mt-4 mb-2">أهم 5 مؤشرات يجب مراقبتها:</h3>
-                    <ul class="list-disc list-inside space-y-1">
-                        <li>معدل إكمال الوحدات التدريبية (Completion Velocity).</li>
-                        <li>نقاط الانقطاع (Drop-off Points) في الفيديو والأنشطة.</li>
-                        <li>متوسط محاولات اجتياز التقييمات التكوينية.</li>
-                        <li>معدل التفاعل والنقاش المجتمعي.</li>
-                        <li>الارتباط بين النشاط وتحقيق الكفاءة.</li>
-                    </ul>
-                `
-            },
-            5: {
-                tag: "Skills Gap Analysis",
-                readTime: "9 min read",
-                date: "28 أغسطس 2026",
-                title: "من رصد الفجوة إلى مسار التعلّم: كيف تصمم مسارًا مخصصًا (Learning Path)؟",
-                content: `
-                    <p>
-                        البرامج التدريبية الموحدة للجميع (One-size-fits-all) تضيع وقت المتميزين ولا تسعف المتعثرين.
-                    </p>
-                    <p>
-                        الحل هو بناء مسارات تعلم مخصصة مبنية على نتائج التقييم المبدئي؛ حيث يتجاوز المتعلم المهارات التي يتقنها ويركز وقته وجهده فقط على سد الفجوات المهارية الفعلية.
-                    </p>
-                `
-            },
-            6: {
-                tag: "Case Study",
-                readTime: "10 min read",
-                date: "19 أغسطس 2026",
-                title: "دراسة حالة: كيف رفعنا معدل إكمال برنامج تدريبي بنسبة 42% عبر إعادة تصميم الأنشطة؟",
-                content: `
-                    <p>
-                        في هذه الدراسة نستعرض التحدي الذي واجهته إحدى الأكاديميات في برنامج تدريب مهني مدته 8 أسابيع، حيث كان معدل الإكمال 38% فقط.
-                    </p>
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mt-4 mb-2">ما قمنا به مع رَقِيم:</h3>
-                    <p>
-                        1. تفكيك المحاضرات الطويلة إلى كبسولات معرفية مدتها 10 دقائق.<br>
-                        2. استبدال الاختبارات النظرية بتحديات أسبوعية عملية (Milestone Projects).<br>
-                        3. تتبع مؤشرات التقدم أسبوعيًا والتدخل المبكر مع المتعثرين.<br>
-                        <strong>النتيجة:</strong> قفز معدل الإتقان والإكمال إلى 80% في الدفعة التالية.
-                    </p>
-                `
-            },
-            7: {
-                tag: "Quality Checklist",
-                readTime: "4 min read",
-                date: "10 أغسطس 2026",
-                title: "قائمة التحقق الذهبية (Quality Checklist) لاعتماد الحقائب التدريبية قبل الإطلاق",
-                content: `
-                    <p>
-                        12 بندًا عمليًا للتحقق من سلامة المنهج التدريبي وجودته:
-                    </p>
-                    <ul class="list-disc list-inside space-y-1">
-                        <li>هل كل هدف مصاغ بفعل سلوكي محدد وقابل للقياس؟</li>
-                        <li>هل يوجد نشاط تطبيقي لكل مهارة مستهدفة؟</li>
-                        <li>هل التقييم النهائي يقيس الأهداف الأساسية فقط؟</li>
-                        <li>هل مدة الوحدات متناسقة مع عمق المعرفة؟</li>
-                    </ul>
-                `
-            }
-        };
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
 
         // Filter and Search Logic
         let currentCategory = 'all';
@@ -992,7 +909,11 @@
                 }
             });
 
-            document.getElementById('article-count-label').innerText = `عرض ${visibleCount} مقال`;
+            const lang = localStorage.lang || 'ar';
+            const countLabel = document.getElementById('article-count-label');
+            if (countLabel) {
+                countLabel.innerText = lang === 'en' ? `Showing ${visibleCount} articles` : `عرض ${visibleCount} مقالات`;
+            }
         }
 
         // Open Article Reader Modal
@@ -1000,11 +921,13 @@
             const article = articlesDB[id];
             if (!article) return;
 
-            document.getElementById('modal-tag').innerText = article.tag;
-            document.getElementById('modal-read-time').innerText = article.readTime;
-            document.getElementById('modal-date').innerText = article.date;
-            document.getElementById('modal-title').innerText = article.title;
-            document.getElementById('modal-content').innerHTML = article.content;
+            const lang = localStorage.lang || 'ar';
+
+            document.getElementById('modal-tag').innerText = article.tag[lang] || article.tag.ar;
+            document.getElementById('modal-read-time').innerText = article.readTime[lang] || article.readTime.ar;
+            document.getElementById('modal-date').innerText = article.date[lang] || article.date.ar;
+            document.getElementById('modal-title').innerText = article.title[lang] || article.title.ar;
+            document.getElementById('modal-content').innerHTML = article.content[lang] || article.content.ar;
 
             const modal = document.getElementById('article-reader-modal');
             modal.classList.remove('hidden');
@@ -1029,7 +952,11 @@
 
         // Download Toolkit Modal Trigger
         function downloadToolkitModal() {
-            alert("تم إرسال حزمة أدوات تخطيط وتقييم التدريب 2026 إلى بريدك، أو يمكنك طلب النموذج المباشر عبر التواصل مع فريق رَقِيم.");
+            const lang = localStorage.lang || 'ar';
+            const msg = lang === 'en'
+                ? "The 2026 Course Planning & Assessment Toolkit has been prepared! Please contact our team via the form or email to receive the direct download link."
+                : "تم تجهيز حزمة أدوات تخطيط وتقييم التدريب 2026! يمكنك إرسال بريدك عبر النموذج أو التواصل معنا للحصول على رابط التحميل الفوري.";
+            alert(msg);
         }
 
         // Newsletter Handler
@@ -1038,6 +965,60 @@
             document.getElementById('nl-success-msg').classList.remove('hidden');
             e.target.reset();
         }
+
+        // Apply Language
+        function setLanguage(lang) {
+            localStorage.lang = lang;
+            const dict = translations_blog[lang] || translations_blog.ar;
+
+            document.documentElement.setAttribute('lang', lang);
+            document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            document.title = dict.page_title;
+
+            // Update Lang Switcher label
+            const langLabel = document.getElementById('lang-label');
+            if (langLabel) {
+                langLabel.innerText = lang === 'ar' ? 'English' : 'العربية';
+            }
+
+            // Update text nodes
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[key]) {
+                    el.innerText = dict[key];
+                }
+            });
+
+            // Update HTML nodes
+            document.querySelectorAll('[data-i18n-html]').forEach(el => {
+                const key = el.getAttribute('data-i18n-html');
+                if (dict[key]) {
+                    el.innerHTML = dict[key];
+                }
+            });
+
+            // Update Placeholder nodes
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (dict[key]) {
+                    el.setAttribute('placeholder', dict[key]);
+                }
+            });
+
+            filterArticles();
+            lucide.createIcons();
+        }
+
+        function toggleLanguage() {
+            const newLang = (localStorage.lang === 'en') ? 'ar' : 'en';
+            setLanguage(newLang);
+        }
+
+        // Initialize on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialLang = localStorage.lang || 'ar';
+            setLanguage(initialLang);
+        });
     </script>
 </body>
 </html>

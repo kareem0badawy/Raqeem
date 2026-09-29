@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مختبر تحليلات التعلّم | دليلك العملي في علم بيانات التعليم و L&D</title>
+    <meta name="description" content="مرجع ومختبر تطبيقي شامل لمهندسي ومحللي بيانات التعلّم والتعليم (L&D Data Analytics): من استكشاف بيانات المدارس، إلى التنبؤ بالتعثر، ونظرية القياس النفسي وتتبع المعرفة الذكي.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN with Raqeem Configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#0d9488',
+                            600: '#0f766e',
+                            700: '#115e59',
+                            800: '#134e4a',
+                            900: '#042f2e',
+                            950: '#021817'
+                        },
+                        editorial: {
+                            bg: '#f8fafc',
+                            card: '#ffffff',
+                            border: '#e2e8f0',
+                            ink: '#090d16',
+                            muted: '#475569',
+                            subtle: '#94a3b8'
+                        },
+                        dark: {
+                            bg: '#070b12',
+                            surface: '#0e1626',
+                            card: '#131e33',
+                            border: '#1e293b',
+                            ink: '#f8fafc',
+                            muted: '#94a3b8'
+                        }
+                    },
+                    fontFamily: {
+                        arabic: ['"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
+                        en: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                        code: ['"Fira Code"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Theme & Language Pre-render (Default Light Mode) -->
+    <script>
+        if (localStorage.theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            if (!('theme' in localStorage)) {
+                localStorage.theme = 'light';
+            }
+        }
+        if (localStorage.lang === 'en') {
+            document.documentElement.setAttribute('lang', 'en');
+            document.documentElement.setAttribute('dir', 'ltr');
+        } else {
+            document.documentElement.setAttribute('lang', 'ar');
+            document.documentElement.setAttribute('dir', 'rtl');
+        }
+    </script>
+
+    <!-- Chart.js for interactive analytics visuals -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- External Lab Translations Module -->
+    <script src="js/lab-translations.js"></script>
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            letter-spacing: -0.01em;
+            line-height: 1.6;
+        }
+
+        html[lang="en"] body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.01em;
+            line-height: 1.55;
+        }
+
+        .font-code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        .dark .glass-panel {
+            background: rgba(14, 22, 38, 0.85);
+        }
+
+        /* Code block styling */
+        .code-container {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 0.875rem;
+            position: relative;
+        }
+        .dark .code-container {
+            background: #060913;
+            border: 1px solid #1e293b;
+        }
+
+        /* Reading Progress Bar */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #0d9488, #2dd4bf, #3b82f6);
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Geometric Background */
+        .crosshair-grid {
+            background-image: 
+                radial-gradient(circle, rgba(13, 148, 136, 0.45) 1.5px, transparent 1.5px),
+                linear-gradient(to right, rgba(13, 148, 136, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(13, 148, 136, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        .dark .crosshair-grid {
+            background-image: 
+                radial-gradient(circle, rgba(45, 212, 191, 0.5) 1.5px, transparent 1.5px),
+                linear-gradient(to right, rgba(45, 212, 191, 0.12) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(45, 212, 191, 0.12) 1px, transparent 1px);
+        }
+
+        /* Direction-aware icon flipping */
+        html[dir="ltr"] .dir-flip {
+            transform: scaleX(-1);
+        }
+
+        .tab-btn.active {
+            background-color: #0d9488;
+            color: #ffffff;
+            border-color: #0d9488;
+        }
+        .dark .tab-btn.active {
+            background-color: #14b8a6;
+            color: #042f2e;
+            border-color: #14b8a6;
+        }
+    </style>
+</head>
+
+<body class="bg-editorial-bg dark:bg-dark-bg text-editorial-ink dark:text-dark-ink transition-colors duration-300 min-h-screen relative selection:bg-brand-500 selection:text-white antialiased overflow-x-hidden">
+    
+    <!-- Top Reading Progress Indicator -->
+    <div id="progress-bar"></div>
+
+    <!-- Geometric Grid & Ambient Glows -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute inset-0 crosshair-grid opacity-90 dark:opacity-75"></div>
+        <div class="absolute -top-10 right-1/4 w-[36rem] h-[36rem] bg-gradient-to-br from-brand-400/20 via-teal-400/15 to-emerald-400/15 dark:from-brand-500/20 dark:via-teal-600/20 dark:to-emerald-600/15 rounded-full blur-[100px] pointer-events-none"></div>
+        <div class="absolute top-1/2 left-[-10rem] w-[36rem] h-[36rem] bg-emerald-500/15 dark:bg-emerald-400/15 rounded-full blur-[120px] pointer-events-none"></div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- HEADER & NAVBAR -->
+    <!-- ========================================================================= -->
+    <header class="sticky top-0 z-50 w-full glass-panel border-b border-gray-200/80 dark:border-dark-border/80 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo & Brand Identity -->
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="group flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-brand-600/25 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 ring-2 ring-brand-400/30">
+                            ر
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-2xl tracking-tight text-gray-900 dark:text-white" data-i18n="brand_name">رَقِيم</span>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 font-mono" data-i18n="lab_badge">Analytics Lab</span>
+                            </div>
+                            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium" data-i18n="lab_brand_subtitle">المختبر التطبيقي لمحللي بيانات التعلّم والتعليم</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden lg:flex items-center gap-3.5 xl:gap-6 text-sm font-medium text-gray-600 dark:text-gray-300">
+                    <a href="index.html" class="whitespace-nowrap hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1 flex items-center gap-1.5 flex-shrink-0">
+                        <i data-lucide="home" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                        <span data-i18n="nav_home">الرئيسية</span>
+                    </a>
+                    <a href="blog.html" class="whitespace-nowrap hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1 flex items-center gap-1.5 flex-shrink-0">
+                        <i data-lucide="book-open" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                        <span data-i18n="nav_blog">المدونة</span>
+                    </a>
+                    <a href="lab.html" class="whitespace-nowrap px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300 font-bold border border-brand-200 dark:border-brand-800/80 flex items-center gap-1.5 flex-shrink-0">
+                        <i data-lucide="cpu" class="w-4 h-4 text-brand-600 flex-shrink-0"></i>
+                        <span data-i18n="nav_lab">مختبر التحليلات</span>
+                    </a>
+                </nav>
+
+                <!-- Actions: Language Switcher, Theme Toggle & CTA -->
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    
+                    <!-- Language Toggle Button -->
+                    <button id="lang-toggle" onclick="toggleLanguage()" class="whitespace-nowrap flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-100 dark:bg-dark-surface text-gray-700 dark:text-gray-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-gray-200/70 dark:hover:bg-dark-card transition-all border border-gray-200/80 dark:border-dark-border text-xs font-bold shadow-sm flex-shrink-0" aria-label="Toggle Language">
+                        <i data-lucide="globe" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                        <span id="lang-label">English</span>
+                    </button>
+
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="p-2.5 rounded-xl bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-dark-card border border-gray-200 dark:border-dark-border transition-colors text-gray-600 dark:text-gray-300 shadow-sm flex-shrink-0" aria-label="تبديل المظهر">
+                        <i data-lucide="sun" id="theme-sun" class="w-4 h-4 block dark:hidden text-amber-500"></i>
+                        <i data-lucide="moon" id="theme-moon" class="w-4 h-4 hidden dark:block text-teal-300"></i>
+                    </button>
+
+                    <a href="index.html#contact" class="whitespace-nowrap hidden sm:inline-flex items-center gap-2 px-4 xl:px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-md shadow-brand-600/20 hover:shadow-lg hover:shadow-brand-600/30 transition-all duration-200 hover:-translate-y-0.5 flex-shrink-0">
+                        <i data-lucide="message-square" class="w-4 h-4 flex-shrink-0"></i>
+                        <span data-i18n="nav_cta">تواصل معنا</span>
+                    </a>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-xl bg-gray-100 dark:bg-dark-surface text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-dark-border flex-shrink-0">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden border-t border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface px-4 pt-3 pb-6 space-y-2">
+            <a href="index.html" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-600 transition-colors">الرئيسية</a>
+            <a href="blog.html" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-600 transition-colors">المدونة المعرفية</a>
+            <a href="lab.html" class="block px-3 py-2.5 rounded-lg text-base font-bold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60">مختبر تحليلات التعلّم</a>
+        </div>
+    </header>
+
+    <!-- ========================================================================= -->
+    <!-- HERO SECTION -->
+    <!-- ========================================================================= -->
+    <section class="relative pt-12 pb-14 border-b border-gray-200/80 dark:border-dark-border/80 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-4xl mx-auto text-center space-y-6">
+                
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white dark:bg-dark-surface text-brand-700 dark:text-brand-300 text-xs font-bold border border-brand-200/80 dark:border-brand-800/60 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                    <span data-i18n="hero_pill">منهج عملي تطبيقي • من البيانات إلى تحسين التعلّم</span>
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-gray-950 dark:text-white leading-[1.25]" data-i18n-html="hero_title">
+                    دليل <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-teal-600 to-emerald-500 dark:from-brand-300 dark:via-teal-300 dark:to-emerald-300">علم بيانات التعليم</span> وتحليلات التعلّم (L&D Data Analytics)
+                </h1>
+
+                <p class="text-base sm:text-lg text-gray-700 dark:text-gray-200 leading-relaxed max-w-3xl mx-auto" data-i18n="hero_desc">
+                    مساحة تعليمية تطبيقية متكاملة مصممة خصيصاً لمحللي بيانات التعليم ومطوري تجارب التعلّم. تغطي الحالات الواقعية من المدارس والمنصات التعليمية، مرتبة بالتدرج من استكشاف البيانات وحتى الذكاء الاصطناعي والتعلّم التكيفي، مدعمة بأكواد بايثون وتطبيقات عملية قابلة للتنفيذ.
+                </p>
+
+                <!-- Quick Action Buttons -->
+                <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+                    <a href="#tier-1" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md shadow-brand-600/25 transition-all flex items-center gap-2">
+                        <span data-i18n="hero_cta_start">ابدأ رحلة التعلم</span>
+                        <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                    </a>
+                    <button onclick="downloadSampleData()" class="px-6 py-3 rounded-xl bg-white dark:bg-dark-surface hover:bg-gray-50 dark:hover:bg-dark-card text-gray-800 dark:text-gray-100 font-bold text-sm border border-gray-200 dark:border-dark-border transition-all flex items-center gap-2 shadow-sm">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i>
+                        <span data-i18n="hero_cta_download">تحميل بيانات تجريبية (CSV)</span>
+                    </button>
+                </div>
+
+                <!-- 4 Quick Stats Badges -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-6 text-start">
+                    <div class="p-3.5 rounded-xl bg-white/80 dark:bg-dark-card border border-gray-200/80 dark:border-dark-border">
+                        <span class="text-xs text-brand-600 dark:text-brand-400 font-bold font-mono">STEP 01-04</span>
+                        <p class="font-bold text-sm text-gray-900 dark:text-white" data-i18n="stat_levels">4 مستويات متدرجة</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-white/80 dark:bg-dark-card border border-gray-200/80 dark:border-dark-border">
+                        <span class="text-xs text-brand-600 dark:text-brand-400 font-bold font-mono">REAL CASES</span>
+                        <p class="font-bold text-sm text-gray-900 dark:text-white" data-i18n="stat_cases">حالات دراسية واقعية</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-white/80 dark:bg-dark-card border border-gray-200/80 dark:border-dark-border">
+                        <span class="text-xs text-brand-600 dark:text-brand-400 font-bold font-mono">PYTHON & ML</span>
+                        <p class="font-bold text-sm text-gray-900 dark:text-white" data-i18n="stat_code">نماذج بايثون كاملة</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-white/80 dark:bg-dark-card border border-gray-200/80 dark:border-dark-border">
+                        <span class="text-xs text-brand-600 dark:text-brand-400 font-bold font-mono">EDTECH & K-12</span>
+                        <p class="font-bold text-sm text-gray-900 dark:text-white" data-i18n="stat_domain">تطبيقات مدرسية و L&D</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- PROGRESSIVE ROADMAP NAVIGATION BAR -->
+    <!-- ========================================================================= -->
+    <div class="sticky top-20 z-40 bg-white/95 dark:bg-dark-surface/95 backdrop-blur-md border-b border-gray-200 dark:border-dark-border py-3">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between gap-2 overflow-x-auto pb-1 text-xs sm:text-sm font-semibold scrollbar-none">
+                <a href="#tier-1" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg bg-gray-100 dark:bg-dark-card hover:bg-brand-50 dark:hover:bg-brand-950/60 hover:text-brand-600 text-gray-700 dark:text-gray-300 transition-colors flex items-center gap-1.5 flex-shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span data-i18n="tier1_nav">01. التأسيس والاستكشاف</span>
+                </a>
+                <a href="#tier-2" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg bg-gray-100 dark:bg-dark-card hover:bg-brand-50 dark:hover:bg-brand-950/60 hover:text-brand-600 text-gray-700 dark:text-gray-300 transition-colors flex items-center gap-1.5 flex-shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span data-i18n="tier2_nav">02. التنبؤ والإنذار المبكر</span>
+                </a>
+                <a href="#tier-3" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg bg-gray-100 dark:bg-dark-card hover:bg-brand-50 dark:hover:bg-brand-950/60 hover:text-brand-600 text-gray-700 dark:text-gray-300 transition-colors flex items-center gap-1.5 flex-shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                    <span data-i18n="tier3_nav">03. التجميع والقياس النفسي</span>
+                </a>
+                <a href="#tier-4" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg bg-gray-100 dark:bg-dark-card hover:bg-brand-50 dark:hover:bg-brand-950/60 hover:text-brand-600 text-gray-700 dark:text-gray-300 transition-colors flex items-center gap-1.5 flex-shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span data-i18n="tier4_nav">04. الذكاء الاصطناعي والتتبع</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MAIN CONTENT: 4 PROGRESSIVE LEVELS -->
+    <!-- ========================================================================= -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+        <!-- ===================================================================== -->
+        <!-- LEVEL 1: FOUNDATION & EXPLORATORY DATA ANALYSIS (EDA) -->
+        <!-- ===================================================================== -->
+        <section id="tier-1" class="scroll-mt-36 space-y-8">
+            <div class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-dark-surface border border-gray-200/90 dark:border-dark-border shadow-sm space-y-6">
+                
+                <!-- Level Header -->
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 dark:border-dark-border/80 pb-6">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold text-xs mb-2">
+                            <i data-lucide="database" class="w-3.5 h-3.5"></i>
+                            <span data-i18n="t1_badge">المستوى 01 • التأسيسي</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-950 dark:text-white" data-i18n="t1_title">
+                            استكشاف بيانات المدارس وتنظيفها (EDA & Data Cleaning)
+                        </h2>
+                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-1" data-i18n="t1_subtitle">
+                            كيف تحول سجلات الطلاب الخام إلى مؤشرات واضحة يقرأها مدير المدرسة والمعلم؟
+                        </p>
+                    </div>
+                    <span class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-dark-card text-xs font-mono font-semibold text-gray-600 dark:text-gray-400">
+                        Pandas • Matplotlib • Data Cleaning
+                    </span>
+                </div>
+
+                <!-- Scenario Story -->
+                <div class="p-5 rounded-2xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40 text-sm space-y-2">
+                    <div class="flex items-center gap-2 font-bold text-blue-900 dark:text-blue-300">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i>
+                        <span>حالة واقعية من مدرسة تجريبية (Real School Scenario):</span>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        طلب منك مدير مدرسة ثانوية تقريراً يوضح: لماذا انخفضت درجات اختبار مادة الرياضيات النصفي؟ عندما استلمت ملف الـ Excel من شؤون الطلاب، وجدت أن 15% من درجات الواجبات مفقودة (NaN)، وبعض الطلاب مسجل لهم حضور 120% (خطأ إدخال)، وأسماء الفصول مكتوبة بطرق مختلفة (مثل: "1-أولى", "أولى-أ"). مهمتك الأولى كمحلل بيانات هي **تنظيف البيانات وبناء أول مخطط لتوزيع الدرجات**.
+                    </p>
+                </div>
+
+                <!-- Concepts & Methods -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                    <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border">
+                        <h4 class="font-bold text-gray-900 dark:text-white flex items-center gap-1.5 mb-1.5 text-brand-600 dark:text-brand-400">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i> 1. معالجة القيم المفقودة
+                        </h4>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            لا تحذف الطالب الذي لم يقدم واجباً بل فرّق بين (الغياب المبرر) واستبدال القيمة بالمتوسط، وبين (عدم التسليم) وتحويله لصفر.
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border">
+                        <h4 class="font-bold text-gray-900 dark:text-white flex items-center gap-1.5 mb-1.5 text-brand-600 dark:text-brand-400">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i> 2. كشف القيم الشاذة (Outliers)
+                        </h4>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            استخدام مقياس الـ Interquartile Range (IQR) أو Z-Score لاكتشاف أخطاء الإدخال في درجات الامتحانات والنسب.
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border">
+                        <h4 class="font-bold text-gray-900 dark:text-white flex items-center gap-1.5 mb-1.5 text-brand-600 dark:text-brand-400">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i> 3. معامل الارتباط (Pearson r)
+                        </h4>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            قياس مدى قوة العلاقة الخطية بين نسبة الحضور والدرجة النهائية لتحديد ما إذا كان الغياب هو السبب الفعلي للتراجع.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Python Code Sandbox -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between text-xs font-mono text-gray-500 dark:text-gray-400">
+                        <span class="flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4 text-emerald-500"></i> clean_school_dataset.py</span>
+                        <button onclick="copyCode('code-tier1')" class="px-2.5 py-1 rounded bg-gray-200 dark:bg-dark-card hover:bg-brand-500 hover:text-white transition-colors text-xs font-sans">نسخ الكود</button>
+                    </div>
+                    <div class="code-container p-4 overflow-x-auto text-xs sm:text-sm font-code">
+<pre id="code-tier1"><code>import pandas as pd
+import numpy as np
+
+# 1. قراءة بيانات الطلاب في المدرسة
+df = pd.read_csv('students_lms_data.csv')
+
+# 2. فحص القيم المفقودة وتلخيص البيانات
+print("القيم المفقودة في كل عمود:")
+print(df.isnull().sum())
+
+# 3. تنظيف البيانات: استبدال غياب الواجبات بصفر وضبط الحضور الأقصى
+df['quiz_avg'] = df['quiz_avg'].fillna(0)
+df['attendance_rate'] = df['attendance_rate'].clip(0, 100) # منع أي قيمة تتجاوز 100%
+
+# 4. حساب مقاييس النزعة المركزية والتشتت
+mean_score = df['final_score'].mean()
+median_score = df['final_score'].median()
+std_score = df['final_score'].std()
+
+# 5. حساب معامل الارتباط بين الحضور والدرجات
+correlation = df['attendance_rate'].corr(df['final_score'])
+print(f"متوسط الدرجات: {mean_score:.1f} | الانحراف المعياري: {std_score:.1f}")
+print(f"معامل الارتباط بين الحضور والدرجة: {correlation:.2f}")
+
+# 6. تصنيف الطلاب إلى مستويات أداء (A, B, C, At-Risk)
+def classify_student(score):
+    if score >= 85: return 'ممتاز (A)'
+    elif score >= 70: return 'جيد (B)'
+    elif score >= 50: return 'مقبول (C)'
+    else: return 'معرض للرسوب (At-Risk)'
+
+df['performance_level'] = df['final_score'].apply(classify_student)
+print(df['performance_level'].value_counts())</code></pre>
+                    </div>
+                </div>
+
+                <!-- Interactive Visualization Sandbox -->
+                <div class="pt-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4 text-brand-500"></i>
+                            رسم بياني تفاعلي: توزيع درجات الطلاب حسب نسبة الحضور
+                        </h4>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">عينة 150 طالب</span>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border h-64">
+                        <canvas id="chart-tier1"></canvas>
+                    </div>
+                </div>
+
+                <!-- Mentor Tip Box -->
+                <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 flex items-start gap-3 text-xs sm:text-sm text-amber-900 dark:text-amber-200">
+                    <i data-lucide="lightbulb" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong>نصيحة ذهبية للمحلل:</strong> عندما يطلب منك المشرف التربوي أو مدير المدرسة تقريراً، تجنب تقديم جداول رقمية معقدة. قدم دائماً (1) النسبة العامة للنجاح، (2) أهم عامل مؤثر (مثل: "الطلاب ذوو الحضور الأقل من 75% انخفضت درجاتهم بـ 28 نقطة")، و(3) الإجراء المقترح لمعالجة المشكلة.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- LEVEL 2: INTERMEDIATE & EARLY WARNING SYSTEMS (PREDICTIVE ML) -->
+        <!-- ===================================================================== -->
+        <section id="tier-2" class="scroll-mt-36 space-y-8">
+            <div class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-dark-surface border border-gray-200/90 dark:border-dark-border shadow-sm space-y-6">
+                
+                <!-- Level Header -->
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 dark:border-dark-border/80 pb-6">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-bold text-xs mb-2">
+                            <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+                            <span data-i18n="t2_badge">المستوى 02 • المتوسط</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-950 dark:text-white" data-i18n="t2_title">
+                            أنظمة الإنذار المبكر والتنبؤ بتعثر الطلاب (Early Warning Systems)
+                        </h2>
+                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-1" data-i18n="t2_subtitle">
+                            كيف نتنبأ باحتمالية رسوب الطالب في الأسبوع الرابع قبل فوات الأوان؟
+                        </p>
+                    </div>
+                    <span class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-dark-card text-xs font-mono font-semibold text-gray-600 dark:text-gray-400">
+                        Scikit-Learn • Random Forest • Feature Engineering
+                    </span>
+                </div>
+
+                <!-- Scenario Story -->
+                <div class="p-5 rounded-2xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 text-sm space-y-2">
+                    <div class="flex items-center gap-2 font-bold text-amber-900 dark:text-amber-300">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i>
+                        <span>حالة واقعية في منصة تعليم إلكتروني (LMS Churn & Failure Prediction):</span>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        في منصة مدرسة ثانوية ذكية، المشكلة ليست في معرفة من رسب في نهاية العام، بل في **التدخل الاستباقي (Proactive Intervention)** خلال أول شهر. نريد بناء نموذج تعلم آلي يقرأ بيانات الأسابيع الأولى (تأخر تسليم الواجبات Submission Lag، عدد دقائق مشاهدة الفيديوهات، وعدد المشاركات في منتدى المادة) ليتنبأ بالطلاب الذين يحتاجون خطة تقوية فورية.
+                    </p>
+                </div>
+
+                <!-- Concepts: Precision vs Recall in Education -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                    <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border">
+                        <h4 class="font-bold text-gray-900 dark:text-white flex items-center gap-1.5 mb-1.5 text-amber-600 dark:text-amber-400">
+                            <i data-lucide="target" class="w-4 h-4"></i> 1. هندسة الميزات (Feature Engineering)
+                        </h4>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            تحويل الأحداث الخام إلى مؤشرات ذكية: مثلاً `submission_lag_hours` (كم ساعة يتأخر الطالب قبل الموعد النهائي) ومعدل اكتمال الفيديو.
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border">
+                        <h4 class="font-bold text-gray-900 dark:text-white flex items-center gap-1.5 mb-1.5 text-amber-600 dark:text-amber-400">
+                            <i data-lucide="shield-alert" class="w-4 h-4"></i> 2. أهمية مقياس Recall في التعليم
+                        </h4>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            في التعليم، الخطأ الأكبر هو (False Negative): طالب سيتعثر ولكن النموذج لم يكتشفه! لذلك نضبط النموذج لتعظيم الـ Recall.
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border">
+                        <h4 class="font-bold text-gray-900 dark:text-white flex items-center gap-1.5 mb-1.5 text-amber-600 dark:text-amber-400">
+                            <i data-lucide="sliders" class="w-4 h-4"></i> 3. تفسير النموذج (Feature Importance)
+                        </h4>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            معرفة أي سلوك هو الأكثر إنذاراً بالخطر (مثل تراجع مشاهدة الفيديوهات أو إخفاق أول كويز) لتوجيه المرشد الطلابي.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Python Code Sandbox -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between text-xs font-mono text-gray-500 dark:text-gray-400">
+                        <span class="flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4 text-emerald-500"></i> train_early_warning_model.py</span>
+                        <button onclick="copyCode('code-tier2')" class="px-2.5 py-1 rounded bg-gray-200 dark:bg-dark-card hover:bg-brand-500 hover:text-white transition-colors text-xs font-sans">نسخ الكود</button>
+                    </div>
+                    <div class="code-container p-4 overflow-x-auto text-xs sm:text-sm font-code">
+<pre id="code-tier2"><code>from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+import pandas as pd
+
+# 1. تجهيز ميزات التعلم (Features) والهدف (Target: 1 = At-Risk, 0 = Safe)
+features = [
+    'attendance_rate',         # نسبة الحضور في أول 4 أسابيع
+    'video_watch_ratio',      # نسبة مشاهدة شروحات الدروس (0-1)
+    'avg_submission_lag_days',# متوسط أيام التأخير في تسليم الواجبات
+    'early_quiz_avg',         # متوسط أول 3 كويزات
+    'forum_posts_count'       # عدد الأسئلة والمشاركات في المنصة
+]
+
+X = df[features]
+y = df['is_at_risk'] # 1 إذا كان الطالب معرضاً للرسوب، 0 إذا كان ناجحاً
+
+# 2. تقسيم البيانات إلى تدريب واختبار (80% تدريب - 20% اختبار)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# 3. تدريب نموذج الغابات العشوائية مع موازنة الفئات (Class Weights)
+model = RandomForestClassifier(n_estimators=100, class_weight='balanced', random_state=42)
+model.fit(X_train, y_train)
+
+# 4. تقييم النموذج بالتركيز على الـ Recall لفئة المتعثرين
+y_pred = model.predict(X_test)
+print("تقرير أداء النموذج:")
+print(classification_report(y_test, y_pred, target_names=['ناجح', 'معرض للتعثر']))
+
+# 5. استخراج أهمية الميزات (Feature Importances)
+importance = pd.Series(model.feature_importances_, index=features).sort_values(ascending=False)
+print("\nالعوامل الأكثر تأثيراً في اكتشاف التعثر المبكر:")
+print(importance)</code></pre>
+                    </div>
+                </div>
+
+                <!-- Interactive Visualization Sandbox -->
+                <div class="pt-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="pie-chart" class="w-4 h-4 text-amber-500"></i>
+                            رسم بياني تفاعلي: الأوزان النسبية لأهم الميزات في توقع تعثر الطالب
+                        </h4>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">Random Forest Importances</span>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border h-64">
+                        <canvas id="chart-tier2"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- LEVEL 3: ADVANCED & CLUSTERING & PSYCHOMETRICS -->
+        <!-- ===================================================================== -->
+        <section id="tier-3" class="scroll-mt-36 space-y-8">
+            <div class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-dark-surface border border-gray-200/90 dark:border-dark-border shadow-sm space-y-6">
+                
+                <!-- Level Header -->
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 dark:border-dark-border/80 pb-6">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-bold text-xs mb-2">
+                            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                            <span data-i18n="t3_badge">المستوى 03 • المتقدم</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-950 dark:text-white" data-i18n="t3_title">
+                            تصنيف أنماط الطلاب والقياس النفسي للاختبارات (Clustering & Psychometrics)
+                        </h2>
+                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-1" data-i18n="t3_subtitle">
+                            كيف نكتشف مجموعات الطلاب غير المرئية ونحلل جودة الأسئلة بنظرية الـ IRT؟
+                        </p>
+                    </div>
+                    <span class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-dark-card text-xs font-mono font-semibold text-gray-600 dark:text-gray-400">
+                        K-Means • Item Response Theory (IRT) • Psychometrics
+                    </span>
+                </div>
+
+                <!-- Scenario Story -->
+                <div class="p-5 rounded-2xl bg-purple-50/50 dark:bg-purple-950/20 border border-purple-100 dark:border-purple-900/40 text-sm space-y-2">
+                    <div class="flex items-center gap-2 font-bold text-purple-900 dark:text-purple-300">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i>
+                        <span>حالة واقعية: مواءمة الاختبارات وتخصيص التعليم (Exam Quality & Learner Personas):</span>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        اشتكى معلمو مادة العلوم من أن اختبار نصف العام كان إما سهلاً جداً أو أن بعض الأسئلة كانت "مضللة". بالإضافة إلى ذلك، يحتاج قسم الإرشاد إلى تقسيم الطلاب إلى 4 مجموعات سلوكية لتقديم دعم مخصص بدلاً من معاملة الجميع بنمط واحد. هنا نطبق **عناقيد K-Means لتقسيم أنماط الطلاب** و**تحليل المفردات الإحصائي (Item Difficulty & Discrimination Index)**.
+                    </p>
+                </div>
+
+                <!-- Core Psychometrics & Clustering Logic -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                    <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border space-y-2">
+                        <h4 class="font-bold text-gray-900 dark:text-white flex items-center gap-1.5 text-purple-600 dark:text-purple-400">
+                            <i data-lucide="help-circle" class="w-4 h-4"></i> تحليل جودة أسئلة الامتحانات (Item Analysis)
+                        </h4>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                            • <strong>معامل الصعوبة (Difficulty Index $p$):</strong> نسبة الطلاب الذين أجابوا إجابة صحيحة. النطاق المثالي بين 0.30 و 0.70.<br>
+                            • <strong>معامل التمييز (Discrimination Index $D$):</strong> قدرة السؤال على التمييز بين الطلاب المتفوقين والضعاف ($D = P_{top} - P_{bottom}$). إذا كان سالباً، فالسؤال مضلل ويجب حذفه فوراً!
+                        </p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border space-y-2">
+                        <h4 class="font-bold text-gray-900 dark:text-white flex items-center gap-1.5 text-purple-600 dark:text-purple-400">
+                            <i data-lucide="users" class="w-4 h-4"></i> أنماط المتعلمين الأربعة (Learner Personas)
+                        </h4>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                            1. <strong>المتفوق المنجز (Fast Achiever):</strong> درجات عالية + وقت دراسة منتظم.<br>
+                            2. <strong>المثابر البطيء (Persistent Learner):</strong> وقت كبير على المنصة + درجات متوسطة.<br>
+                            3. <strong>المتكاسل قبيل الاختبار (Crammer):</strong> نشاط مفاجئ ليلة الامتحان.<br>
+                            4. <strong>المنعزل المتعثر (Disengaged):</strong> غياب وتأخر مستمر.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Python Code Sandbox -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between text-xs font-mono text-gray-500 dark:text-gray-400">
+                        <span class="flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4 text-emerald-500"></i> student_clustering_and_item_analysis.py</span>
+                        <button onclick="copyCode('code-tier3')" class="px-2.5 py-1 rounded bg-gray-200 dark:bg-dark-card hover:bg-brand-500 hover:text-white transition-colors text-xs font-sans">نسخ الكود</button>
+                    </div>
+                    <div class="code-container p-4 overflow-x-auto text-xs sm:text-sm font-code">
+<pre id="code-tier3"><code>from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+import pandas as pd
+import numpy as np
+
+# ==========================================
+# 1. تجميع الطلاب إلى أنماط تعلم (K-Means)
+# ==========================================
+cluster_features = ['study_hours_per_week', 'video_watch_ratio', 'final_score']
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(df[cluster_features])
+
+kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)
+df['cluster'] = kmeans.fit_predict(X_scaled)
+
+print("متوسطات كل نمط من الطلاب:")
+print(df.groupby('cluster')[cluster_features].mean())
+
+# ==========================================
+# 2. تحليل جودة أسئلة الاختبار (Item Analysis)
+# ==========================================
+def calculate_item_metrics(exam_matrix):
+    """
+    exam_matrix: DataFrame يحتوي على 0 أو 1 لكل سؤال لكل طالب
+    """
+    total_scores = exam_matrix.sum(axis=1)
+    top_27_cutoff = total_scores.quantile(0.73)
+    bot_27_cutoff = total_scores.quantile(0.27)
+    
+    top_group = exam_matrix[total_scores >= top_27_cutoff]
+    bot_group = exam_matrix[total_scores <= bot_27_cutoff]
+    
+    results = []
+    for col in exam_matrix.columns:
+        p_val = exam_matrix[col].mean() # معامل الصعوبة
+        p_top = top_group[col].mean()
+        p_bot = bot_group[col].mean()
+        d_val = p_top - p_bot          # معامل التمييز
+        
+        status = "ممتاز" if d_val >= 0.3 else ("مقبول" if d_val >= 0.2 else "معيب/مضلل")
+        results.append({"Question": col, "Difficulty_p": round(p_val, 2), "Discrimination_D": round(d_val, 2), "Status": status})
+        
+    return pd.DataFrame(results)</code></pre>
+                    </div>
+                </div>
+
+                <!-- Interactive Visualization Sandbox -->
+                <div class="pt-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="scatter-chart" class="w-4 h-4 text-purple-500"></i>
+                            رسم بياني تفاعلي: توزيع أنماط الطلاب حسب ساعات الدراسة والدرجة النهائية
+                        </h4>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">4 Student Clusters</span>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border h-64">
+                        <canvas id="chart-tier3"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- LEVEL 4: CUTTING-EDGE & KNOWLEDGE TRACING & ADAPTIVE AI -->
+        <!-- ===================================================================== -->
+        <section id="tier-4" class="scroll-mt-36 space-y-8">
+            <div class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-dark-surface border border-gray-200/90 dark:border-dark-border shadow-sm space-y-6">
+                
+                <!-- Level Header -->
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 dark:border-dark-border/80 pb-6">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs mb-2">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                            <span data-i18n="t4_badge">المستوى 04 • المتطور والذكاء الاصطناعي</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-950 dark:text-white" data-i18n="t4_title">
+                            تتبع المعرفة والتعلّم التكيفي (Knowledge Tracing & Adaptive Learning)
+                        </h2>
+                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-1" data-i18n="t4_subtitle">
+                            كيف يعرف النظام الذكي أن الطالب أتقن مهارة معينة وما هو السؤال الأنسب له الآن؟
+                        </p>
+                    </div>
+                    <span class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-dark-card text-xs font-mono font-semibold text-gray-600 dark:text-gray-400">
+                        Bayesian Knowledge Tracing (BKT) • Deep KT • Adaptive Engines
+                    </span>
+                </div>
+
+                <!-- Scenario Story -->
+                <div class="p-5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 text-sm space-y-2">
+                    <div class="flex items-center gap-2 font-bold text-emerald-900 dark:text-emerald-300">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i>
+                        <span>حالة واقعية في تطبيق تعليم ذكي مثل Duolingo أو منصة رياضيات تفاعلية:</span>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        عندما يجيب الطالب على 5 مسائل متتالية في مادة الجبر، نريد تقدير مدى احتمالية إتقانه لمفهوم "المعادلات الخطية" لحظياً. إذا أتقن المفهوم (Mastery > 90%) ينقله النظام للمستوى الأعلى، وإذا تعثر يقترح عليه تلميحاً أو فيديو شارحاً مخصصاً. هذه هي خوارزمية **تتبع المعرفة البايزي (Bayesian Knowledge Tracing)**.
+                    </p>
+                </div>
+
+                <!-- Mathematical Foundation of BKT -->
+                <div class="p-5 rounded-2xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border text-xs sm:text-sm space-y-3">
+                    <h4 class="font-bold text-gray-900 dark:text-white flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                        <i data-lucide="cpu" class="w-4 h-4"></i> المعلمات الأربع لنموذج BKT الرياضي:
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="p-3 rounded-xl bg-white dark:bg-dark-surface border border-gray-200/80 dark:border-dark-border">
+                            <strong class="block text-brand-600 dark:text-brand-400 font-mono">$P(L_0)$ Prior</strong>
+                            <span>احتمالية معرفة الطالب للمهارة قبل حل أي سؤال (مثال: 0.20).</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-white dark:bg-dark-surface border border-gray-200/80 dark:border-dark-border">
+                            <strong class="block text-brand-600 dark:text-brand-400 font-mono">$P(T)$ Transit</strong>
+                            <span>احتمالية انتقال الطالب من عدم المعرفة إلى المعرفة بعد محاولة (مثال: 0.15).</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-white dark:bg-dark-surface border border-gray-200/80 dark:border-dark-border">
+                            <strong class="block text-brand-600 dark:text-brand-400 font-mono">$P(G)$ Guess</strong>
+                            <span>احتمالية أن يخمن الطالب الإجابة الصحيحة بالصدفة (مثال: 0.25).</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-white dark:bg-dark-surface border border-gray-200/80 dark:border-dark-border">
+                            <strong class="block text-brand-600 dark:text-brand-400 font-mono">$P(S)$ Slip</strong>
+                            <span>احتمالية أن يخطئ الطالب رغم أنه يعرف المهارة بسبب السهو (مثال: 0.10).</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Python Code Sandbox -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between text-xs font-mono text-gray-500 dark:text-gray-400">
+                        <span class="flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4 text-emerald-500"></i> bayesian_knowledge_tracing.py</span>
+                        <button onclick="copyCode('code-tier4')" class="px-2.5 py-1 rounded bg-gray-200 dark:bg-dark-card hover:bg-brand-500 hover:text-white transition-colors text-xs font-sans">نسخ الكود</button>
+                    </div>
+                    <div class="code-container p-4 overflow-x-auto text-xs sm:text-sm font-code">
+<pre id="code-tier4"><code>class BayesianKnowledgeTracer:
+    """
+    نموذج تتبع إتقان المهارات لحظياً بناءً على إجابات الطالب
+    """
+    def __init__(self, p_l0=0.2, p_t=0.15, p_g=0.25, p_s=0.10):
+        self.p_l = p_l0 # المعرفة الحالية
+        self.p_t = p_t  # معدل التعلم
+        self.p_g = p_g  # التخمين
+        self.p_s = p_s  # السهو
+        self.history = [self.p_l]
+
+    def update(self, is_correct: bool):
+        """
+        تحديث احتمالية المعرفة بناءً على نتيجة إجابة الطالب (1 = صح، 0 = خطأ)
+        """
+        if is_correct:
+            # قاعدة بايز عند الإجابة الصحيحة
+            p_correct_given_known = 1 - self.p_s
+            p_correct_given_unknown = self.p_g
+            p_l_given_obs = (self.p_l * p_correct_given_known) / (
+                self.p_l * p_correct_given_known + (1 - self.p_l) * p_correct_given_unknown
+            )
+        else:
+            # قاعدة بايز عند الإجابة الخاطئة
+            p_wrong_given_known = self.p_s
+            p_wrong_given_unknown = 1 - self.p_g
+            p_l_given_obs = (self.p_l * p_wrong_given_known) / (
+                self.p_l * p_wrong_given_known + (1 - self.p_l) * p_wrong_given_unknown
+            )
+
+        # إضافة فرصة التعلم بعد المحاولة
+        self.p_l = p_l_given_obs + (1 - p_l_given_obs) * self.p_t
+        self.history.append(round(self.p_l, 4))
+        return self.p_l
+
+# تجربة عملية لمحاكاة طالب يجيب على سلسلة أسئلة: [خطأ، صح، صح، صح، صح]
+student_responses = [0, 1, 1, 1, 1]
+bkt = BayesianKnowledgeTracer()
+
+print("تتبع تطور إتقان الطالب للمفهوم خطوة بخطوة:")
+for i, res in enumerate(student_responses, 1):
+    mastery = bkt.update(res == 1)
+    status = "إجابة صحيحة ✓" if res == 1 else "إجابة خاطئة ✗"
+    print(f"السؤال {i} ({status}) -> نسبة الإتقان التقديرية: {mastery * 100:.1f}%")</code></pre>
+                    </div>
+                </div>
+
+                <!-- Interactive Visualization Sandbox -->
+                <div class="pt-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-emerald-500"></i>
+                            رسم بياني تفاعلي: منحنى الإتقان اللحظي (BKT Mastery Trajectory)
+                        </h4>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">محاكاة 8 أسئلة متتالية</span>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border h-64">
+                        <canvas id="chart-tier4"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- SYNTHETIC DATASET DOWNLOAD SECTION -->
+        <!-- ===================================================================== -->
+        <section class="p-8 rounded-3xl bg-gradient-to-br from-brand-900 via-teal-900 to-gray-950 text-white shadow-xl space-y-6">
+            <div class="max-w-3xl space-y-3">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-brand-500/30 text-teal-300 font-mono text-xs font-bold border border-brand-400/30">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> CSV DATASET FOR PRACTICE
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-bold" data-i18n="gen_title">
+                    مولّد مجموعة بيانات مدرسية تجريبية (School LMS Dataset)
+                </h3>
+                <p class="text-gray-300 text-sm sm:text-base leading-relaxed" data-i18n="gen_desc">
+                    يمكنك تحميل ملف بيانات CSV جاهز يحتوي على 200 طالب ببيانات واقعية (ساعات الدراسة، نسبة الحضور، التفاعل مع الفيديو، درجات الاختبارات، وحالة التعثر) لتطبيق الأكواد مباشرة على جهازك في Jupyter Notebook أو Google Colab.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+                <button onclick="downloadSampleData()" class="px-6 py-3.5 rounded-xl bg-teal-400 hover:bg-teal-300 text-gray-950 font-bold text-sm shadow-lg shadow-teal-500/25 transition-all flex items-center gap-2">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                    <span data-i18n="btn_gen_csv">تنزيل ملف البيانات (students_lms_data.csv)</span>
+                </button>
+                <span class="text-xs text-teal-200/80 font-mono">200 Students • 8 Key Educational Metrics • UTF-8</span>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========================================================================= -->
+    <!-- FOOTER -->
+    <!-- ========================================================================= -->
+    <footer class="border-t border-gray-200 dark:border-dark-border bg-white dark:bg-dark-surface py-12 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+            <div class="flex items-center justify-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-brand-600 text-white flex items-center justify-center font-bold text-sm">ر</div>
+                <span class="font-bold text-lg text-gray-900 dark:text-white">رَقِيم</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 font-mono">Lab</span>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 max-w-xl mx-auto" data-i18n="footer_note">
+                صُمم هذا المختبر ليكون مرجعاً علمياً وعملياً شاملاً لكل باحث ومحلل في مجال بيانات التعلّم وتكنولوجيا التعليم.
+            </p>
+            <div class="pt-4 text-xs text-gray-400 dark:text-gray-500">
+                © 2026 رَقِيم • مختبر علم بيانات التعليم وتحليلات التعلّم
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================================================================= -->
+    <!-- JAVASCRIPT & CHART INITIALIZATION -->
+    <!-- ========================================================================= -->
+    <script>
+        // Reading Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) progressBar.style.width = scrolled + '%';
+        });
+
+        // Theme Toggle Handler
+        const themeBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('theme-sun');
+        const moonIcon = document.getElementById('theme-moon');
+
+        function updateThemeIcons() {
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                if (sunIcon) sunIcon.classList.add('hidden');
+                if (moonIcon) moonIcon.classList.remove('hidden');
+            } else {
+                if (sunIcon) sunIcon.classList.remove('hidden');
+                if (moonIcon) moonIcon.classList.add('hidden');
+            }
+        }
+
+        if (themeBtn) {
+            themeBtn.addEventListener('click', () => {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.theme = 'light';
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.theme = 'dark';
+                }
+                updateThemeIcons();
+                initCharts(); // Re-render charts with correct theme colors
+            });
+        }
+        updateThemeIcons();
+
+        // Language Switcher Handler
+        function setLanguage(lang) {
+            localStorage.lang = lang;
+            const dict = (typeof translations_lab !== 'undefined' && translations_lab[lang]) ? translations_lab[lang] : translations_lab.ar;
+            
+            document.documentElement.setAttribute('lang', lang);
+            document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            
+            document.title = dict.page_title || document.title;
+            
+            const langLabel = document.getElementById('lang-label');
+            if (langLabel) {
+                langLabel.innerText = lang === 'ar' ? 'English' : 'العربية';
+            }
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[key]) el.innerText = dict[key];
+            });
+
+            document.querySelectorAll('[data-i18n-html]').forEach(el => {
+                const key = el.getAttribute('data-i18n-html');
+                if (dict[key]) el.innerHTML = dict[key];
+            });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function toggleLanguage() {
+            const current = localStorage.lang || 'ar';
+            const target = current === 'ar' ? 'en' : 'ar';
+            setLanguage(target);
+        }
+
+        // Mobile Menu
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Copy Code Functionality
+        function copyCode(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            navigator.clipboard.writeText(el.innerText).then(() => {
+                alert('تم نسخ الكود بنجاح!');
+            });
+        }
+
+        // Synthetic CSV Dataset Generator
+        function downloadSampleData() {
+            const headers = "student_id,attendance_rate,study_hours_per_week,video_watch_ratio,avg_submission_lag_days,early_quiz_avg,forum_posts_count,final_score,is_at_risk\n";
+            let rows = "";
+            for (let i = 1; i <= 200; i++) {
+                const att = Math.floor(Math.random() * 35) + 65; // 65-100%
+                const hours = (Math.random() * 8 + 1).toFixed(1); // 1-9 hrs
+                const video = (Math.random() * 0.6 + 0.4).toFixed(2); // 0.4 - 1.0
+                const lag = (Math.random() * 4).toFixed(1); // 0-4 days
+                const quiz = Math.floor(att * 0.6 + Math.random() * 30); // correlated
+                const forum = Math.floor(Math.random() * 12);
+                const final_sc = Math.min(100, Math.max(20, Math.floor(quiz * 0.7 + att * 0.3 + (Math.random() * 10 - 5))));
+                const at_risk = final_sc < 60 ? 1 : 0;
+
+                rows += `STU_${1000 + i},${att},${hours},${video},${lag},${quiz},${forum},${final_sc},${at_risk}\n`;
+            }
+            const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'students_lms_data.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Initialize Live Chart.js Visualizations
+        let c1, c2, c3, c4;
+
+        function initCharts() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#94a3b8' : '#475569';
+            const gridColor = isDark ? 'rgba(30, 41, 59, 0.7)' : 'rgba(226, 232, 240, 0.8)';
+
+            // Destroy existing charts if re-rendering
+            if (c1) c1.destroy();
+            if (c2) c2.destroy();
+            if (c3) c3.destroy();
+            if (c4) c4.destroy();
+
+            // Chart 1: Attendance vs Final Score
+            const ctx1 = document.getElementById('chart-tier1');
+            if (ctx1) {
+                c1 = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: ['أقل من 60% حضور', '60-70% حضور', '70-80% حضور', '80-90% حضور', '90-100% حضور'],
+                        datasets: [{
+                            label: 'متوسط الدرجة النهائية',
+                            data: [42, 58, 71, 84, 93],
+                            backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#0d9488', '#10b981'],
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: textColor }, grid: { display: false } },
+                            y: { max: 100, ticks: { color: textColor }, grid: { color: gridColor } }
+                        }
+                    }
+                });
+            }
+
+            // Chart 2: Feature Importance (Early Warning)
+            const ctx2 = document.getElementById('chart-tier2');
+            if (ctx2) {
+                c2 = new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: ['درجات الكويزات الأولى', 'نسبة الحضور', 'تأخر التسليم (Lag)', 'مشاهدة الفيديو', 'مشاركات المنتدى'],
+                        datasets: [{
+                            label: 'الأهمية النسبية في النموذج (%)',
+                            data: [38, 26, 18, 12, 6],
+                            backgroundColor: '#f59e0b',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                            y: { ticks: { color: textColor }, grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // Chart 3: Student Clusters
+            const ctx3 = document.getElementById('chart-tier3');
+            if (ctx3) {
+                c3 = new Chart(ctx3, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+                            { label: 'المتفوق المنجز', data: [{x: 8, y: 92}, {x: 7.5, y: 88}, {x: 9, y: 95}, {x: 8.2, y: 90}], backgroundColor: '#10b981' },
+                            { label: 'المثابر البطيء', data: [{x: 7.5, y: 68}, {x: 8.5, y: 72}, {x: 8.0, y: 65}, {x: 7.0, y: 70}], backgroundColor: '#3b82f6' },
+                            { label: 'المتكاسل ليلة الامتحان', data: [{x: 2.5, y: 62}, {x: 3.0, y: 65}, {x: 2.0, y: 58}], backgroundColor: '#f59e0b' },
+                            { label: 'المتعثر المنعزل', data: [{x: 1.5, y: 38}, {x: 2.0, y: 45}, {x: 1.0, y: 32}], backgroundColor: '#ef4444' }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: textColor, font: { size: 11 } } } },
+                        scales: {
+                            x: { title: { display: true, text: 'ساعات الدراسة أسبوعياً', color: textColor }, ticks: { color: textColor }, grid: { color: gridColor } },
+                            y: { title: { display: true, text: 'الدرجة النهائية (%)', color: textColor }, ticks: { color: textColor }, grid: { color: gridColor } }
+                        }
+                    }
+                });
+            }
+
+            // Chart 4: BKT Knowledge Trajectory
+            const ctx4 = document.getElementById('chart-tier4');
+            if (ctx4) {
+                c4 = new Chart(ctx4, {
+                    type: 'line',
+                    data: {
+                        labels: ['البداية', 'سؤال 1 (✗)', 'سؤال 2 (✓)', 'سؤال 3 (✓)', 'سؤال 4 (✓)', 'سؤال 5 (✓)', 'سؤال 6 (✓)', 'سؤال 7 (✓)'],
+                        datasets: [{
+                            label: 'احتمالية إتقان المفهوم P(L)',
+                            data: [0.20, 0.16, 0.38, 0.62, 0.81, 0.91, 0.96, 0.98],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                            fill: true,
+                            tension: 0.35,
+                            pointRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: textColor }, grid: { display: false } },
+                            y: { min: 0, max: 1, ticks: { color: textColor }, grid: { color: gridColor } }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialLang = localStorage.lang || 'ar';
+            setLanguage(initialLang);
+            initCharts();
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
