@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مختبر تحليلات التعلّم | موسوعة الحالات التطبيقية في علم بيانات التعليم و L&D</title>
-    <meta name="description" content="موسوعة ومختبر تطبيقي شامل لمحللي بيانات التعليم ومهندسي التعلّم: مكتبة ضخمة من الحالات المدرسية والمؤسسية الواقعية مدعمة بأكواد بايثون ورسوم بيانية تفاعلية.">
+    <meta name="description" content="دليل تطبيقي شامل ومبسط لمحللي بيانات التعليم: حالات واقعية من المدارس ومنصات التعلّم، مشروحة خطوة بخطوة مع أكواد بايثون ورسوم بيانية تفاعلية.">
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts: IBM Plex Sans Arabic & Plus Jakarta Sans & Fira Code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS CDN with Raqeem Configuration -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -31,23 +31,6 @@
                             800: '#134e4a',
                             900: '#042f2e',
                             950: '#021817'
-                        },
-                        editorial: {
-                            bg: '#f1f5f9',
-                            surface: '#ffffff',
-                            card: '#ffffff',
-                            border: '#cbd5e1',
-                            ink: '#0f172a',
-                            muted: '#475569',
-                            subtle: '#64748b'
-                        },
-                        dark: {
-                            bg: '#090d16',
-                            surface: '#0f172a',
-                            card: '#141e33',
-                            border: '#1e293b',
-                            ink: '#f8fafc',
-                            muted: '#94a3b8'
                         }
                     },
                     fontFamily: {
@@ -60,7 +43,7 @@
         }
     </script>
 
-    <!-- Theme & Language Pre-render (Default Light Mode) -->
+    <!-- Theme Initialization (Strictly Light Mode Default) -->
     <script>
         if (localStorage.theme === 'dark') {
             document.documentElement.classList.add('dark');
@@ -70,16 +53,9 @@
                 localStorage.theme = 'light';
             }
         }
-        if (localStorage.lang === 'en') {
-            document.documentElement.setAttribute('lang', 'en');
-            document.documentElement.setAttribute('dir', 'ltr');
-        } else {
-            document.documentElement.setAttribute('lang', 'ar');
-            document.documentElement.setAttribute('dir', 'rtl');
-        }
     </script>
 
-    <!-- Chart.js for interactive analytics visuals -->
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Cases Data Base -->
@@ -92,13 +68,7 @@
         body {
             font-family: 'IBM Plex Sans Arabic', sans-serif;
             letter-spacing: -0.01em;
-            line-height: 1.6;
-        }
-
-        html[lang="en"] body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: -0.01em;
-            line-height: 1.55;
+            line-height: 1.7;
         }
 
         .font-code {
@@ -110,14 +80,25 @@
             position: fixed;
             top: 0;
             left: 0;
-            height: 3px;
+            height: 3.5px;
             background: linear-gradient(90deg, #0d9488, #2dd4bf, #3b82f6);
             z-index: 100;
             width: 0%;
             transition: width 0.1s ease-out;
         }
 
-        /* Custom Scrollbar for sidebar and code blocks */
+        /* Active case selection in sidebar */
+        .case-nav-item.active {
+            background-color: #0d9488;
+            color: #ffffff;
+            font-weight: 700;
+        }
+        .dark .case-nav-item.active {
+            background-color: #14b8a6;
+            color: #042f2e;
+        }
+
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -133,27 +114,6 @@
             background: #334155;
         }
 
-        /* Active case styling in catalog */
-        .case-card-btn.active {
-            border-color: #0d9488 !important;
-            background-color: #f0fdfa !important;
-            box-shadow: 0 4px 12px -2px rgba(13, 148, 136, 0.15);
-        }
-        .dark .case-card-btn.active {
-            background-color: rgba(13, 148, 136, 0.15) !important;
-            border-color: #2dd4bf !important;
-        }
-
-        .tab-btn.active {
-            border-bottom: 2px solid #0d9488;
-            color: #0d9488;
-            font-weight: 700;
-        }
-        .dark .tab-btn.active {
-            border-bottom: 2px solid #2dd4bf;
-            color: #2dd4bf;
-        }
-
         /* Direction-aware icon flipping */
         html[dir="ltr"] .dir-flip {
             transform: scaleX(-1);
@@ -161,420 +121,424 @@
     </style>
 </head>
 
-<body class="bg-slate-100 dark:bg-dark-bg text-slate-900 dark:text-dark-ink transition-colors duration-200 min-h-screen relative antialiased flex flex-col">
+<body class="bg-[#f8fafc] dark:bg-[#070b13] text-[#0f172a] dark:text-[#f8fafc] transition-colors duration-200 min-h-screen flex flex-col antialiased">
     
     <!-- Top Reading Progress Indicator -->
     <div id="progress-bar"></div>
 
     <!-- ========================================================================= -->
-    <!-- HEADER & NAVBAR -->
+    <!-- HEADER -->
     <!-- ========================================================================= -->
-    <header class="sticky top-0 z-50 w-full bg-white dark:bg-dark-surface border-b border-slate-200 dark:border-dark-border shadow-sm">
+    <header class="sticky top-0 z-50 w-full bg-white/95 dark:bg-[#0c121e]/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800/90 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-18 py-3">
+            <div class="flex items-center justify-between h-16 sm:h-18">
                 
-                <!-- Logo & Brand Identity -->
+                <!-- Logo & Brand -->
                 <div class="flex items-center gap-3">
-                    <a href="index.html" class="group flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-brand-600/25 group-hover:scale-105 transition-transform">
+                    <a href="index.html" class="flex items-center gap-2.5 group">
+                        <div class="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
                             ر
                         </div>
                         <div class="flex flex-col">
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold text-xl tracking-tight text-gray-900 dark:text-white">رَقِيم</span>
-                                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/70 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/80 font-mono">Case Lab</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-extrabold text-lg text-slate-900 dark:text-white">رَقِيم</span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-mono">Analytics Lab</span>
                             </div>
-                            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">موسوعة علم بيانات التعليم والمدارس</span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">موسوعة علم بيانات التعليم</span>
                         </div>
                     </a>
                 </div>
 
-                <!-- Desktop Navigation Links -->
-                <nav class="hidden md:flex items-center gap-3 xl:gap-5 text-sm font-medium text-gray-600 dark:text-gray-300">
-                    <a href="index.html" class="whitespace-nowrap hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1 flex items-center gap-1.5 flex-shrink-0">
-                        <i data-lucide="home" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex items-center gap-5 text-sm font-medium text-slate-600 dark:text-slate-300">
+                    <a href="index.html" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1 flex items-center gap-1.5">
+                        <i data-lucide="home" class="w-4 h-4 text-brand-500"></i>
                         <span>الرئيسية</span>
                     </a>
-                    <a href="blog.html" class="whitespace-nowrap hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1 flex items-center gap-1.5 flex-shrink-0">
-                        <i data-lucide="book-open" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                    <a href="blog.html" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors py-1 flex items-center gap-1.5">
+                        <i data-lucide="book-open" class="w-4 h-4 text-brand-500"></i>
                         <span>المدونة</span>
                     </a>
-                    <a href="lab.html" class="whitespace-nowrap px-3.5 py-1.5 rounded-full bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300 font-bold border border-brand-200 dark:border-brand-800/80 flex items-center gap-1.5 flex-shrink-0 shadow-sm">
-                        <i data-lucide="cpu" class="w-4 h-4 text-brand-600 flex-shrink-0"></i>
-                        <span>مختبر التحليلات</span>
+                    <a href="lab.html" class="px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/70 text-brand-700 dark:text-brand-300 font-bold border border-brand-200 dark:border-brand-800/80 flex items-center gap-1.5">
+                        <i data-lucide="cpu" class="w-4 h-4 text-brand-600"></i>
+                        <span>مختبر الحالات</span>
                     </a>
                 </nav>
 
-                <!-- Actions: Sample Data Download, Theme Toggle -->
-                <div class="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
-                    <button onclick="downloadSampleData()" class="whitespace-nowrap px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 flex-shrink-0">
-                        <i data-lucide="download" class="w-3.5 h-3.5 flex-shrink-0"></i>
-                        <span>تحميل بيانات تدريب (CSV)</span>
+                <!-- Actions: Download CSV, Theme Toggle -->
+                <div class="flex items-center gap-2.5">
+                    <button onclick="downloadSampleData()" class="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">تحميل بيانات تجريبية (CSV)</span>
+                        <span class="sm:hidden">ملف CSV</span>
                     </button>
 
                     <!-- Theme Toggle -->
-                    <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-dark-card hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-dark-border transition-colors text-gray-600 dark:text-gray-300 shadow-sm flex-shrink-0" aria-label="تبديل المظهر">
+                    <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition-colors shadow-sm" aria-label="تبديل المظهر">
                         <i data-lucide="sun" id="theme-sun" class="w-4 h-4 block dark:hidden text-amber-500"></i>
                         <i data-lucide="moon" id="theme-moon" class="w-4 h-4 hidden dark:block text-teal-300"></i>
                     </button>
 
-                    <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl bg-slate-100 dark:bg-dark-card text-gray-700 dark:text-gray-200 border border-slate-200 dark:border-dark-border">
-                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    <!-- Mobile Cases Menu Drawer Toggle -->
+                    <button onclick="toggleMobileCasesList()" class="lg:hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1">
+                        <i data-lucide="list" class="w-4 h-4"></i>
+                        <span>الحالات</span>
                     </button>
                 </div>
             </div>
-        </div>
-
-        <!-- Mobile Navigation Menu -->
-        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 dark:border-dark-border bg-white dark:bg-dark-surface px-4 pt-3 pb-5 space-y-2">
-            <a href="index.html" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 hover:text-brand-600">الرئيسية</a>
-            <a href="blog.html" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-brand-50 hover:text-brand-600">المدونة المعرفية</a>
-            <a href="lab.html" class="block px-3 py-2 rounded-lg text-sm font-bold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60">مختبر تحليلات التعلّم</a>
         </div>
     </header>
 
     <!-- ========================================================================= -->
-    <!-- LAB WORKBENCH SUB-HEADER -->
+    <!-- MAIN WORKBENCH LAYOUT: SIDEBAR LIST + CLEAN EDITORIAL READER -->
     <!-- ========================================================================= -->
-    <div class="bg-white dark:bg-dark-surface border-b border-slate-200 dark:border-dark-border py-4 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
-                        <span>موسوعة الحالات التطبيقية في علم بيانات التعليم</span>
-                        <span class="text-xs px-2.5 py-0.5 rounded-full bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 font-mono font-bold" id="total-cases-count">10 حالات تطبيقية</span>
-                    </h1>
-                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        دليل شامل ومرجع عملي مخصص لمحللي بيانات المدارس ومهندسي التعلّم (L&D Data Analysts): حالات واقعية، كود بايثون كامل، ومخططات تفاعلية.
-                    </p>
-                </div>
-
-                <!-- Category & Tier Filter Badges -->
-                <div class="flex flex-wrap items-center gap-2 text-xs font-semibold">
-                    <button onclick="filterCases('all')" class="filter-btn active px-3 py-1.5 rounded-lg bg-brand-600 text-white transition-all" data-category="all">
-                        الكل (10)
-                    </button>
-                    <button onclick="filterCases('K-12 School Analytics')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-dark-card text-gray-700 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all" data-category="K-12 School Analytics">
-                        تحليلات المدارس
-                    </button>
-                    <button onclick="filterCases('Early Warning & Retention ML')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-dark-card text-gray-700 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all" data-category="Early Warning & Retention ML">
-                        الإنذار المبكر
-                    </button>
-                    <button onclick="filterCases('Psychometrics & Exam Quality')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-dark-card text-gray-700 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all" data-category="Psychometrics & Exam Quality">
-                        جودة الاختبارات
-                    </button>
-                    <button onclick="filterCases('AI & Adaptive Learning')" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-dark-card text-gray-700 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all" data-category="AI & Adaptive Learning">
-                        الذكاء الاصطناعي
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================================================= -->
-    <!-- MAIN WORKBENCH: DUAL PANEL STUDIO (CATALOG + DEEP DIVE) -->
-    <!-- ========================================================================= -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             <!-- ================================================================= -->
-            <!-- LEFT PANEL: CASE CATALOG DIRECTORY (COL 4) -->
+            <!-- STICKY SIDEBAR: CASE DIRECTORY (COL 4) -->
             <!-- ================================================================= -->
-            <aside class="lg:col-span-4 space-y-4">
-                <div class="bg-white dark:bg-dark-surface rounded-2xl border border-slate-200 dark:border-dark-border p-4 shadow-sm">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-dark-border">
-                        <span class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-1.5">
-                            <i data-lucide="list-filter" class="w-4 h-4 text-brand-500"></i>
-                            فهرس الحالات والمشاريع
-                        </span>
-                        <span class="text-xs text-gray-500 dark:text-gray-400 font-mono" id="showing-count">10 حالات</span>
+            <aside id="sidebar-container" class="hidden lg:block lg:col-span-4 sticky top-24 space-y-4">
+                <div class="bg-white dark:bg-[#0c121e] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 p-4 shadow-sm space-y-3">
+                    
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="folder-kanban" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
+                            <span class="font-bold text-sm text-slate-900 dark:text-white">فهرس الحالات والمشاريع</span>
+                        </div>
+                        <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400" id="sidebar-counter">10 حالات</span>
                     </div>
 
                     <!-- Search Input -->
-                    <div class="pt-3">
-                        <div class="relative">
-                            <input type="text" id="case-search-input" onkeyup="handleSearch(this.value)" placeholder="ابحث في الحالات، الخوارزميات، أو المفاهيم..." class="w-full bg-slate-50 dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl px-3.5 py-2 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-brand-500 transition-colors">
-                            <i data-lucide="search" class="w-3.5 h-3.5 text-gray-400 absolute left-3 top-2.5 dir-flip"></i>
-                        </div>
+                    <div class="relative">
+                        <input type="text" id="search-input" onkeyup="filterCasesSearch(this.value)" placeholder="ابحث في الحالات أو الخوارزميات..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-brand-500 transition-colors">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5 dir-flip"></i>
                     </div>
 
-                    <!-- Catalog List -->
-                    <div class="space-y-2 mt-4 max-h-[720px] overflow-y-auto pr-1" id="catalog-list">
-                        <!-- Dynamic Render via JS -->
+                    <!-- Category Pills -->
+                    <div class="flex flex-wrap gap-1.5 pt-1 text-[11px]">
+                        <button onclick="filterByCategory('all')" class="cat-pill active px-2.5 py-1 rounded-lg bg-brand-600 text-white font-semibold transition-all" data-cat="all">الكل (10)</button>
+                        <button onclick="filterByCategory('K-12 School Analytics')" class="cat-pill px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 font-medium transition-all" data-cat="K-12 School Analytics">تحليلات المدارس</button>
+                        <button onclick="filterByCategory('Early Warning & Retention ML')" class="cat-pill px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 font-medium transition-all" data-cat="Early Warning & Retention ML">الإنذار المبكر</button>
+                        <button onclick="filterByCategory('Psychometrics & Exam Quality')" class="cat-pill px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 font-medium transition-all" data-cat="Psychometrics & Exam Quality">جودة الاختبارات</button>
+                        <button onclick="filterByCategory('AI & Adaptive Learning')" class="cat-pill px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 font-medium transition-all" data-cat="AI & Adaptive Learning">الذكاء الاصطناعي</button>
                     </div>
+
+                    <!-- Cases Nav List -->
+                    <div class="space-y-1.5 mt-3 max-h-[520px] overflow-y-auto pr-1" id="cases-sidebar-list">
+                        <!-- Rendered by JS -->
+                    </div>
+
                 </div>
 
-                <!-- Learning Tip Card -->
-                <div class="p-4 rounded-2xl bg-teal-50/70 dark:bg-teal-950/20 border border-teal-100 dark:border-teal-900/40 text-xs text-teal-900 dark:text-teal-200 space-y-1.5 shadow-sm">
-                    <div class="flex items-center gap-2 font-bold">
-                        <i data-lucide="sparkles" class="w-4 h-4 text-teal-600"></i>
-                        <span>طريقة المذاكرة المقترحة:</span>
-                    </div>
-                    <p class="leading-relaxed">
-                        ابدئي بقراءة السيناريو الواقعي وهيكل البيانات، ثم جربي نسخ كود بايثون وتشغيله محلياً على ملف الـ CSV التجريبي لمقارنة مخرجاتك مع الرسوم البيانية المرفقة.
+                <!-- Study Tip Card -->
+                <div class="p-4 rounded-2xl bg-brand-50/70 dark:bg-brand-950/20 border border-brand-200/70 dark:border-brand-900/40 text-xs text-brand-900 dark:text-brand-200 space-y-1">
+                    <span class="font-bold flex items-center gap-1.5">
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-brand-600"></i> نصيحة للمذاكرة والتطبيق:
+                    </span>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                        كل حالة تحتوي على السيناريو الواقعي، جدول البيانات، كود بايثون كامل، ومخطط تفاعلي. اقرأي الخطوات بالتسلسل وطبقي الكود على ملف الـ CSV المرفق.
                     </p>
                 </div>
             </aside>
 
             <!-- ================================================================= -->
-            <!-- RIGHT PANEL: ACTIVE CASE STUDIO & DEEP DIVE (COL 8) -->
+            <!-- MAIN EDITORIAL CASE READER CANVAS (COL 8) -->
             <!-- ================================================================= -->
-            <section class="lg:col-span-8 space-y-6">
+            <main class="lg:col-span-8 space-y-8">
                 
-                <!-- Main Case Card Surface -->
-                <div class="bg-white dark:bg-dark-surface rounded-2xl border border-slate-200 dark:border-dark-border p-6 sm:p-8 shadow-sm space-y-6" id="case-studio-container">
+                <!-- Main Reader Article Card -->
+                <article class="bg-white dark:bg-[#0c121e] rounded-3xl border border-slate-200/90 dark:border-slate-800/90 p-6 sm:p-10 shadow-sm space-y-8" id="case-reader-canvas">
                     
-                    <!-- Case Header Meta -->
-                    <div class="space-y-3 border-b border-slate-100 dark:border-dark-border pb-5">
+                    <!-- Top Meta & Badges -->
+                    <div class="space-y-3 border-b border-slate-100 dark:border-slate-800 pb-6">
                         <div class="flex flex-wrap items-center justify-between gap-2">
                             <div class="flex items-center gap-2">
-                                <span class="px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-xs font-bold font-mono" id="active-tier-badge">المستوى 01 • تأسيسي</span>
-                                <span class="text-slate-300 dark:text-slate-700">•</span>
-                                <span class="text-xs font-semibold text-brand-600 dark:text-brand-400" id="active-category">K-12 School Analytics</span>
+                                <span class="px-3 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 text-xs font-bold font-mono border border-teal-200/80 dark:border-teal-800/60" id="case-tier-badge">المستوى 01 • تأسيسي</span>
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" id="case-cat-badge">تحليلات المدارس</span>
                             </div>
-                            <span class="text-xs font-mono text-gray-400 dark:text-gray-500" id="active-case-id">CASE #01</span>
+                            <span class="text-xs font-mono font-bold text-slate-400" id="case-id-badge">CASE #01</span>
                         </div>
 
-                        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white leading-tight" id="active-title">
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white leading-[1.3]" id="case-title">
                             كشف الغياب المزمن ودمج سجلات الحضور بدرجات الاختبارات
-                        </h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed" id="active-summary">
+                        </h1>
+
+                        <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-normal" id="case-summary">
                             بناء خط معالجة (ETL Pipeline) لدمج سجلات الحضور اليومية مع درجات الفصول وكشف الطلاب الذين يعانون من غياب مزمن خفي يؤثر على التحصيل.
                         </p>
                     </div>
 
-                    <!-- Internal Tabs: Scenario, Schema, Python Code, Interactive Visual -->
-                    <div class="border-b border-slate-200 dark:border-dark-border">
-                        <div class="flex items-center gap-6 text-xs sm:text-sm overflow-x-auto pb-0">
-                            <button onclick="switchTab('scenario')" class="tab-btn active py-2.5 transition-colors flex items-center gap-1.5 whitespace-nowrap" id="tab-btn-scenario">
-                                <i data-lucide="briefcase" class="w-4 h-4"></i>
-                                <span>1. السيناريو والمشكلة الواقعية</span>
-                            </button>
-                            <button onclick="switchTab('schema')" class="tab-btn py-2.5 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition-colors flex items-center gap-1.5 whitespace-nowrap" id="tab-btn-schema">
-                                <i data-lucide="table" class="w-4 h-4"></i>
-                                <span>2. جدول وهيكل البيانات</span>
-                            </button>
-                            <button onclick="switchTab('code')" class="tab-btn py-2.5 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition-colors flex items-center gap-1.5 whitespace-nowrap" id="tab-btn-code">
-                                <i data-lucide="terminal" class="w-4 h-4"></i>
-                                <span>3. كود بايثون الكامل (Python)</span>
-                            </button>
-                            <button onclick="switchTab('visual')" class="tab-btn py-2.5 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition-colors flex items-center gap-1.5 whitespace-nowrap" id="tab-btn-visual">
-                                <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
-                                <span>4. المخطط التفاعلي والتوصيات</span>
-                            </button>
+                    <!-- SECTION 1: SCENARIO & SCHOOL CONTEXT -->
+                    <section class="space-y-4">
+                        <div class="flex items-center gap-2 text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">1</div>
+                            <h2>سياق الحالة والمشكلة الواقعية (School & Business Context)</h2>
                         </div>
-                    </div>
+                        
+                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line" id="case-scenario-text">
+                            نص السيناريو...
+                        </div>
+                    </section>
 
-                    <!-- TAB 1: SCENARIO -->
-                    <div id="tab-content-scenario" class="space-y-4">
-                        <div class="p-5 rounded-xl bg-slate-50 dark:bg-dark-card border border-slate-200 dark:border-dark-border space-y-3">
-                            <h4 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2 text-brand-600 dark:text-brand-400">
-                                <i data-lucide="file-text" class="w-4 h-4"></i> سياق الحالة الدراسية (School Context):
-                            </h4>
-                            <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line" id="active-scenario-text">
-                                سياق الحالة...
-                            </p>
+                    <!-- SECTION 2: DATASET SCHEMA -->
+                    <section class="space-y-4">
+                        <div class="flex items-center gap-2 text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                            <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">2</div>
+                            <h2>هيكل وجدول البيانات المستخدمة (Data Schema)</h2>
                         </div>
 
-                        <!-- Takeaways Box -->
-                        <div class="p-5 rounded-xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-900/40 space-y-2">
-                            <h4 class="font-bold text-sm text-amber-900 dark:text-amber-200 flex items-center gap-2">
-                                <i data-lucide="lightbulb" class="w-4 h-4 text-amber-600"></i> أهم الاستنتاجات لمحلل البيانات (Key Takeaways):
-                            </h4>
-                            <ul class="text-xs sm:text-sm text-amber-900/90 dark:text-amber-200/90 space-y-1.5 list-disc list-inside" id="active-takeaways-list">
+                        <div class="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-xs sm:text-sm text-start">
+                                    <thead class="bg-slate-100 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold">
+                                        <tr>
+                                            <th class="p-3.5 text-start">اسم العمود (Column)</th>
+                                            <th class="p-3.5 text-start">نوع البيانات (Type)</th>
+                                            <th class="p-3.5 text-start">الوصف والمعنى التعليمي في المدرسة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-[#0c121e]" id="case-schema-tbody">
+                                        <!-- Dynamic Schema Rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 3: PYTHON CODE SANDBOX -->
+                    <section class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">3</div>
+                                <h2>كود بايثون المطبق خطوة بخطوة (Python Pipeline)</h2>
+                            </div>
+                            <button onclick="copyCurrentCode()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-brand-600 hover:text-white text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span>نسخ الكود</span>
+                            </button>
+                        </div>
+
+                        <div class="bg-[#0b1120] text-[#e2e8f0] rounded-2xl p-5 overflow-x-auto text-xs sm:text-sm font-code leading-relaxed border border-slate-800 shadow-inner">
+                            <pre><code id="case-code-block"># Python Code</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 4: INTERACTIVE VISUAL & TAKEAWAYS -->
+                    <section class="space-y-6">
+                        <div class="flex items-center gap-2 text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">4</div>
+                            <h2>المخطط البياني والتوصيات التنفيذية (Visual & Key Takeaways)</h2>
+                        </div>
+
+                        <!-- Live Chart Container -->
+                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-3">
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono block">
+                                المخطط التحليلي الناتج:
+                            </span>
+                            <div class="h-72 w-full">
+                                <canvas id="case-chart-canvas"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Executive Takeaways Callout -->
+                        <div class="p-5 sm:p-6 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-900/50 space-y-3">
+                            <div class="flex items-center gap-2 font-bold text-emerald-900 dark:text-emerald-200 text-sm sm:text-base">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
+                                <span>ماذا نكتب في التقرير التنفيذي لمدير المدرسة / الفريق؟</span>
+                            </div>
+                            <ul class="text-xs sm:text-sm text-emerald-950 dark:text-emerald-100/90 space-y-2 list-disc list-inside leading-relaxed" id="case-takeaways-list">
                                 <!-- Dynamic List -->
                             </ul>
                         </div>
-                    </div>
-
-                    <!-- TAB 2: DATA SCHEMA -->
-                    <div id="tab-content-schema" class="hidden space-y-4">
-                        <div class="border border-slate-200 dark:border-dark-border rounded-xl overflow-hidden">
-                            <table class="w-full text-xs text-start">
-                                <thead class="bg-slate-50 dark:bg-dark-card border-b border-slate-200 dark:border-dark-border font-bold text-gray-700 dark:text-gray-300">
-                                    <tr>
-                                        <th class="p-3">اسم المتغير (Column Name)</th>
-                                        <th class="p-3">النوع (Type)</th>
-                                        <th class="p-3">الوصف والمعنى التعليمي</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100 dark:divide-dark-border" id="active-schema-tbody">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- TAB 3: PYTHON CODE -->
-                    <div id="tab-content-code" class="hidden space-y-3">
-                        <div class="flex items-center justify-between text-xs font-mono text-gray-500 dark:text-gray-400">
-                            <span class="flex items-center gap-1.5"><i data-lucide="file-code" class="w-4 h-4 text-emerald-500"></i> analysis_script.py</span>
-                            <button onclick="copyActiveCode()" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-dark-card hover:bg-brand-600 hover:text-white transition-colors text-xs font-sans font-semibold">
-                                نسخ الكود
-                            </button>
-                        </div>
-                        <div class="bg-slate-900 text-slate-100 rounded-xl p-4 overflow-x-auto text-xs sm:text-sm font-code leading-relaxed border border-slate-800">
-                            <pre><code id="active-code-block"># Python Code</code></pre>
-                        </div>
-                    </div>
-
-                    <!-- TAB 4: INTERACTIVE VISUAL & REPORT -->
-                    <div id="tab-content-visual" class="hidden space-y-6">
-                        <div class="space-y-2">
-                            <h4 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <i data-lucide="line-chart" class="w-4 h-4 text-brand-500"></i>
-                                المخطط البياني الناتج من التحليل:
-                            </h4>
-                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-dark-card border border-slate-200 dark:border-dark-border h-72">
-                                <canvas id="active-chart-canvas"></canvas>
-                            </div>
-                        </div>
-                    </div>
+                    </section>
 
                     <!-- Navigation Between Cases -->
-                    <div class="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-dark-border">
-                        <button onclick="navigateCase(-1)" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-dark-card hover:bg-slate-200 dark:hover:bg-slate-800 text-xs font-bold text-gray-700 dark:text-gray-300 transition-colors flex items-center gap-1.5">
-                            <i data-lucide="chevron-right" class="w-4 h-4 dir-flip"></i>
+                    <div class="flex items-center justify-between pt-8 border-t border-slate-100 dark:border-slate-800">
+                        <button onclick="navigateCase(-1)" class="px-4 sm:px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors flex items-center gap-2">
+                            <i data-lucide="arrow-right" class="w-4 h-4 dir-flip"></i>
                             <span>الحالة السابقة</span>
                         </button>
-                        <span class="text-xs text-gray-400 font-mono" id="case-pagination-indicator">1 / 10</span>
-                        <button onclick="navigateCase(1)" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm">
+                        
+                        <span class="text-xs font-mono font-bold text-slate-400" id="pagination-indicator">1 / 10</span>
+
+                        <button onclick="navigateCase(1)" class="px-4 sm:px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-sm">
                             <span>الحالة التالية</span>
-                            <i data-lucide="chevron-left" class="w-4 h-4 dir-flip"></i>
+                            <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i>
                         </button>
                     </div>
 
-                </div>
-            </section>
+                </article>
+
+            </main>
 
         </div>
-    </main>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MOBILE CASES DRAWER MODAL -->
+    <!-- ========================================================================= -->
+    <div id="mobile-cases-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end justify-center">
+        <div class="bg-white dark:bg-[#0c121e] rounded-t-3xl w-full max-h-[80vh] p-5 flex flex-col space-y-4 border-t border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                <span class="font-bold text-sm text-slate-900 dark:text-white">اختر حالة دراسية</span>
+                <button onclick="toggleMobileCasesList()" class="p-1 rounded-lg text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-2 overflow-y-auto flex-1" id="mobile-cases-list">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
 
     <!-- ========================================================================= -->
     <!-- FOOTER -->
     <!-- ========================================================================= -->
-    <footer class="border-t border-slate-200 dark:border-dark-border bg-white dark:bg-dark-surface py-8 mt-auto">
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0c121e] py-8 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
             <div class="flex items-center justify-center gap-2">
                 <div class="w-6 h-6 rounded bg-brand-600 text-white flex items-center justify-center font-bold text-xs">ر</div>
-                <span class="font-bold text-sm text-gray-900 dark:text-white">رَقِيم</span>
-                <span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-dark-card text-gray-600 dark:text-gray-400 font-mono">Educational Data Lab</span>
+                <span class="font-bold text-sm text-slate-900 dark:text-white">رَقِيم</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">Educational Data Lab</span>
             </div>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
+            <p class="text-xs text-slate-500 dark:text-slate-400">
                 مرجع تطبيقي شامل ومجاني لتعلم مهارات علم بيانات التعليم وقياس الأثر التدريبي.
             </p>
         </div>
     </footer>
 
     <!-- ========================================================================= -->
-    <!-- LAB JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC -->
     <!-- ========================================================================= -->
     <script>
-        let currentCaseIndex = 0;
-        let filteredCases = LAB_CASES;
-        let activeChartInstance = null;
+        let currentIdx = 0;
+        let displayedCases = LAB_CASES;
+        let chartInstance = null;
 
-        // Render Catalog List
-        function renderCatalog() {
-            const listEl = document.getElementById('catalog-list');
-            if (!listEl) return;
-            listEl.innerHTML = '';
+        // Render Sidebar Nav List
+        function renderSidebar() {
+            const list = document.getElementById('cases-sidebar-list');
+            const mobList = document.getElementById('mobile-cases-list');
+            if (!list) return;
 
-            filteredCases.forEach((c, idx) => {
-                const isSelected = idx === currentCaseIndex;
-                const btn = document.createElement('button');
-                btn.className = `case-card-btn w-full text-start p-3 rounded-xl border transition-all flex items-start gap-3 ${
-                    isSelected 
-                        ? 'active border-brand-500 bg-brand-50/60 dark:bg-brand-950/40 text-gray-900 dark:text-white shadow-sm' 
-                        : 'border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card hover:border-slate-300 dark:hover:border-slate-700 text-gray-700 dark:text-gray-300'
+            list.innerHTML = '';
+            if (mobList) mobList.innerHTML = '';
+
+            displayedCases.forEach((c, idx) => {
+                const isActive = idx === currentIdx;
+                
+                // Desktop Item
+                const item = document.createElement('button');
+                item.className = `case-nav-item w-full text-start p-3 rounded-xl transition-all flex items-start gap-2.5 ${
+                    isActive 
+                        ? 'active shadow-sm' 
+                        : 'bg-slate-50/70 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300'
                 }`;
-                btn.onclick = () => selectCase(idx);
-
-                btn.innerHTML = `
-                    <div class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-dark-surface text-brand-600 dark:text-brand-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <i data-lucide="${c.icon || 'book-open'}" class="w-4 h-4"></i>
+                item.onclick = () => loadCase(idx);
+                item.innerHTML = `
+                    <div class="w-6 h-6 rounded-lg ${isActive ? 'bg-white/20 text-white' : 'bg-slate-200/70 dark:bg-slate-800 text-brand-600 dark:text-brand-400'} flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold font-mono">
+                        ${idx + 1}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between gap-1 mb-1">
-                            <span class="text-[10px] font-mono font-bold text-brand-600 dark:text-brand-400">${c.tierName}</span>
-                            <span class="text-[10px] text-gray-400 font-mono">#0${idx + 1}</span>
+                        <div class="flex items-center justify-between text-[10px] mb-0.5">
+                            <span class="${isActive ? 'text-white/80' : 'text-brand-600 dark:text-brand-400'} font-mono font-bold">${c.tierName}</span>
                         </div>
-                        <h4 class="font-bold text-xs leading-snug line-clamp-2 text-gray-900 dark:text-white">${c.titleAr}</h4>
+                        <h4 class="font-bold text-xs leading-snug line-clamp-2 ${isActive ? 'text-white' : 'text-slate-900 dark:text-white'}">${c.titleAr}</h4>
                     </div>
                 `;
-                listEl.appendChild(btn);
+                list.appendChild(item);
+
+                // Mobile Item
+                if (mobList) {
+                    const mobItem = document.createElement('button');
+                    mobItem.className = `w-full text-start p-3 rounded-xl border ${isActive ? 'border-brand-500 bg-brand-50 dark:bg-brand-950/50' : 'border-slate-200 dark:border-slate-700'} flex items-center gap-3`;
+                    mobItem.onclick = () => {
+                        loadCase(idx);
+                        toggleMobileCasesList();
+                    };
+                    mobItem.innerHTML = `
+                        <span class="w-6 h-6 rounded bg-brand-600 text-white text-xs font-bold flex items-center justify-center">${idx + 1}</span>
+                        <div class="flex-1 min-w-0">
+                            <span class="text-[10px] text-brand-600 font-bold block">${c.tierName}</span>
+                            <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">${c.titleAr}</h4>
+                        </div>
+                    `;
+                    mobList.appendChild(mobItem);
+                }
             });
 
-            document.getElementById('showing-count').innerText = `${filteredCases.length} حالات`;
+            document.getElementById('sidebar-counter').innerText = `${displayedCases.length} حالات`;
             if (window.lucide) lucide.createIcons();
         }
 
-        // Select and Load a Case
-        function selectCase(index) {
-            if (index < 0 || index >= filteredCases.length) return;
-            currentCaseIndex = index;
-            const c = filteredCases[currentCaseIndex];
+        // Load Active Case into Reading Canvas
+        function loadCase(index) {
+            if (index < 0 || index >= displayedCases.length) return;
+            currentIdx = index;
+            const c = displayedCases[currentIdx];
 
-            // Update UI elements
-            document.getElementById('active-tier-badge').innerText = c.tierName;
-            document.getElementById('active-category').innerText = c.categoryAr;
-            document.getElementById('active-case-id').innerText = `CASE #${c.id.toUpperCase()}`;
-            document.getElementById('active-title').innerText = c.titleAr;
-            document.getElementById('active-summary').innerText = c.summaryAr;
-            document.getElementById('active-scenario-text').innerText = c.scenario;
-            document.getElementById('active-code-block').innerText = c.codeSnippet;
+            // Meta
+            document.getElementById('case-tier-badge').innerText = c.tierName;
+            document.getElementById('case-cat-badge').innerText = c.categoryAr;
+            document.getElementById('case-id-badge').innerText = `CASE #${c.id.toUpperCase()}`;
+            document.getElementById('case-title').innerText = c.titleAr;
+            document.getElementById('case-summary').innerText = c.summaryAr;
+            document.getElementById('case-scenario-text').innerText = c.scenario;
+            document.getElementById('case-code-block').innerText = c.codeSnippet;
 
-            // Render Schema Table
-            const tbody = document.getElementById('active-schema-tbody');
+            // Schema Table
+            const tbody = document.getElementById('case-schema-tbody');
             tbody.innerHTML = '';
             c.dataSchema.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="p-3 font-mono font-bold text-brand-600 dark:text-brand-400">${item.col}</td>
-                    <td class="p-3 font-mono text-gray-500 dark:text-gray-400">${item.type}</td>
-                    <td class="p-3 text-gray-700 dark:text-gray-300">${item.desc}</td>
+                    <td class="p-3.5 font-mono font-bold text-brand-600 dark:text-brand-400">${item.col}</td>
+                    <td class="p-3.5 font-mono text-slate-500 dark:text-slate-400">${item.type}</td>
+                    <td class="p-3.5 text-slate-700 dark:text-slate-300">${item.desc}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            // Render Takeaways
-            const takeawaysList = document.getElementById('active-takeaways-list');
-            takeawaysList.innerHTML = '';
+            // Takeaways
+            const list = document.getElementById('case-takeaways-list');
+            list.innerHTML = '';
             c.takeaways.forEach(t => {
                 const li = document.createElement('li');
                 li.innerText = t;
-                takeawaysList.appendChild(li);
+                list.appendChild(li);
             });
 
-            // Update Pagination
-            document.getElementById('case-pagination-indicator').innerText = `${currentCaseIndex + 1} / ${filteredCases.length}`;
+            // Pagination
+            document.getElementById('pagination-indicator').innerText = `${currentIdx + 1} / ${displayedCases.length}`;
 
-            // Refresh Catalog selection visual
-            renderCatalog();
+            // Refresh sidebar active styling
+            renderSidebar();
 
-            // Re-render chart
-            renderActiveChart(c.chartConfig);
+            // Render Chart
+            renderChart(c.chartConfig);
 
-            // Switch to scenario tab by default
-            switchTab('scenario');
-            if (window.lucide) lucide.createIcons();
+            // Scroll reader to top smoothly on desktop
+            const reader = document.getElementById('case-reader-canvas');
+            if (reader && window.scrollY > 300) {
+                reader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
-        // Render Active Case Chart
-        function renderActiveChart(config) {
-            const canvas = document.getElementById('active-chart-canvas');
+        // Render Chart.js
+        function renderChart(config) {
+            const canvas = document.getElementById('case-chart-canvas');
             if (!canvas) return;
 
             const isDark = document.documentElement.classList.contains('dark');
             const textColor = isDark ? '#94a3b8' : '#475569';
-            const gridColor = isDark ? 'rgba(30, 41, 59, 0.7)' : 'rgba(226, 232, 240, 0.8)';
+            const gridColor = isDark ? 'rgba(51, 65, 85, 0.4)' : 'rgba(226, 232, 240, 0.8)';
 
-            if (activeChartInstance) {
-                activeChartInstance.destroy();
+            if (chartInstance) {
+                chartInstance.destroy();
             }
 
-            activeChartInstance = new Chart(canvas, {
+            chartInstance = new Chart(canvas, {
                 type: config.type || 'bar',
                 data: {
                     labels: config.labels,
@@ -585,101 +549,73 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            labels: { color: textColor, font: { size: 11 } }
+                            labels: { color: textColor, font: { size: 12, family: 'IBM Plex Sans Arabic' } }
                         }
                     },
                     scales: config.type !== 'radar' ? {
-                        x: { ticks: { color: textColor }, grid: { display: false } },
+                        x: { ticks: { color: textColor, font: { size: 11 } }, grid: { display: false } },
                         y: { ticks: { color: textColor }, grid: { color: gridColor } }
                     } : {}
                 }
             });
         }
 
-        // Tab Switching
-        function switchTab(tabId) {
-            ['scenario', 'schema', 'code', 'visual'].forEach(t => {
-                const content = document.getElementById(`tab-content-${t}`);
-                const btn = document.getElementById(`tab-btn-${t}`);
-                if (content) content.classList.add('hidden');
-                if (btn) {
-                    btn.classList.remove('active');
-                    btn.classList.add('text-gray-500');
-                }
-            });
-
-            const activeContent = document.getElementById(`tab-content-${tabId}`);
-            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
-            if (activeContent) activeContent.classList.remove('hidden');
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-                activeBtn.classList.remove('text-gray-500');
-            }
-
-            // If switching to visual tab, resize chart
-            if (tabId === 'visual' && activeChartInstance) {
-                activeChartInstance.resize();
-            }
+        // Navigation
+        function navigateCase(direction) {
+            let next = currentIdx + direction;
+            if (next < 0) next = displayedCases.length - 1;
+            if (next >= displayedCases.length) next = 0;
+            loadCase(next);
         }
 
-        // Navigate Prev/Next Case
-        function navigateCase(delta) {
-            let nextIndex = currentCaseIndex + delta;
-            if (nextIndex < 0) nextIndex = filteredCases.length - 1;
-            if (nextIndex >= filteredCases.length) nextIndex = 0;
-            selectCase(nextIndex);
-        }
-
-        // Filter Cases by Category
-        function filterCases(category) {
-            document.querySelectorAll('.filter-btn').forEach(b => {
-                if (b.getAttribute('data-category') === category) {
-                    b.className = "filter-btn active px-3 py-1.5 rounded-lg bg-brand-600 text-white transition-all";
+        // Filter Category
+        function filterByCategory(category) {
+            document.querySelectorAll('.cat-pill').forEach(btn => {
+                if (btn.getAttribute('data-cat') === category) {
+                    btn.className = "cat-pill active px-2.5 py-1 rounded-lg bg-brand-600 text-white font-semibold transition-all";
                 } else {
-                    b.className = "filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-dark-card text-gray-700 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all";
+                    btn.className = "cat-pill px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 font-medium transition-all";
                 }
             });
 
             if (category === 'all') {
-                filteredCases = LAB_CASES;
+                displayedCases = LAB_CASES;
             } else {
-                filteredCases = LAB_CASES.filter(c => c.category === category);
+                displayedCases = LAB_CASES.filter(c => c.category === category);
             }
 
-            currentCaseIndex = 0;
-            renderCatalog();
-            selectCase(0);
+            currentIdx = 0;
+            renderSidebar();
+            if (displayedCases.length > 0) loadCase(0);
         }
 
-        // Search Filter
-        function handleSearch(query) {
+        // Search
+        function filterCasesSearch(query) {
             const q = query.trim().toLowerCase();
             if (!q) {
-                filteredCases = LAB_CASES;
+                displayedCases = LAB_CASES;
             } else {
-                filteredCases = LAB_CASES.filter(c => 
+                displayedCases = LAB_CASES.filter(c => 
                     c.titleAr.toLowerCase().includes(q) ||
                     c.summaryAr.toLowerCase().includes(q) ||
                     c.scenario.toLowerCase().includes(q) ||
                     c.categoryAr.toLowerCase().includes(q)
                 );
             }
-            currentCaseIndex = 0;
-            renderCatalog();
-            if (filteredCases.length > 0) {
-                selectCase(0);
-            }
+            currentIdx = 0;
+            renderSidebar();
+            if (displayedCases.length > 0) loadCase(0);
         }
 
-        // Copy Active Python Code
-        function copyActiveCode() {
-            const code = document.getElementById('active-code-block').innerText;
+        // Copy Python Code
+        function copyCurrentCode() {
+            const code = document.getElementById('case-code-block').innerText;
             navigator.clipboard.writeText(code).then(() => {
                 alert('تم نسخ الكود بنجاح إلى الحافظة!');
             });
         }
 
-        // Download Practice CSV Dataset
+        // Download CSV
         function downloadSampleData() {
             const headers = "student_id,attendance_rate,study_hours_per_week,video_completion_pct,avg_submission_lag_hours,quiz_avg,forum_posts_count,final_score,is_failed\n";
             let rows = "";
@@ -702,6 +638,12 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+        }
+
+        // Toggle Mobile Cases Drawer
+        function toggleMobileCasesList() {
+            const drawer = document.getElementById('mobile-cases-drawer');
+            if (drawer) drawer.classList.toggle('hidden');
         }
 
         // Reading Progress Bar
@@ -739,26 +681,17 @@
                     localStorage.theme = 'dark';
                 }
                 updateThemeIcons();
-                if (filteredCases[currentCaseIndex]) {
-                    renderActiveChart(filteredCases[currentCaseIndex].chartConfig);
+                if (displayedCases[currentIdx]) {
+                    renderChart(displayedCases[currentIdx].chartConfig);
                 }
             });
         }
         updateThemeIcons();
 
-        // Mobile Menu
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (mobileMenuBtn && mobileMenu) {
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-
-        // Initialize on DOM load
+        // Initial Load
         document.addEventListener('DOMContentLoaded', () => {
-            renderCatalog();
-            selectCase(0);
+            renderSidebar();
+            loadCase(0);
             if (window.lucide) lucide.createIcons();
         });
     </script>
